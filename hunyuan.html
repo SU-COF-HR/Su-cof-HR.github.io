@@ -1,0 +1,589 @@
+HTML
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>求职网站汇总 | 专业求职导航</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --glass: rgba(255, 255, 255, 0.15);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            --border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .category {
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .category.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .platforms-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .platform-card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
+        }
+
+        .platform-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .platform-name::before {
+            content: '🔹';
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .platform-url {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+        }
+
+        .platform-url:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .platform-url::before {
+            content: '🔗';
+            margin-right: 0.5rem;
+        }
+
+        .platform-features {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .priority-tip {
+            background: linear-gradient(to right, rgba(76, 201, 240, 0.1), rgba(72, 149, 239, 0.1));
+            color: var(--dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 3rem;
+            font-weight: 500;
+            border-left: 4px solid var(--success);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .priority-tip::before {
+            content: '💡';
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            opacity: 0.2;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .platforms-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .priority-tip::before {
+                display: none;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll animation */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← 返回首页</a>
+        
+        <header>
+            <h1>求职网站汇总</h1>
+            <p class="subtitle">全面收录各类求职平台，助您高效找到理想工作</p>
+        </header>
+        
+        <div class="category animate-on-scroll" id="official-platforms">
+            <h2>国家级官方就业平台</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">国家大学生就业服务平台</div>
+                    <a href="https://www.ncss.cn/" class="platform-url" target="_blank">https://www.ncss.cn/</a>
+                    <div class="platform-features">主管单位：教育部 | 适合人群：高校毕业生及用人单位 | 特点：覆盖全国各高校的就业信息，提供职业测评、简历优化等服务。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">中国公共招聘网</div>
+                    <a href="http://job.mohrss.gov.cn/" class="platform-url" target="_blank">http://job.mohrss.gov.cn/</a>
+                    <div class="platform-features">主办单位：人力资源和社会保障部 | 特点：全国最大的人力资源招聘平台，岗位覆盖各行各业。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">就业在线网</div>
+                    <a href="https://www.jobonline.cn/" class="platform-url" target="_blank">https://www.jobonline.cn/</a>
+                    <div class="platform-features">主办单位：人力资源社会保障部 | 特点：汇总全国各地的人才市场信息，提供行业细分数据、薪资对比、就业趋势分析。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">国聘网</div>
+                    <a href="https://www.iguopin.com/" class="platform-url" target="_blank">https://www.iguopin.com/</a>
+                    <div class="platform-features">主办单位：国务院国有资产监督管理委员会新闻中心 | 特点：主打央企、国企、事业单位岗位，每年定期开展全国性的大型招聘活动。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">国资小新（国央企招聘）</div>
+                    <div class="platform-features">搜索方式：微信公众号、小程序搜索"国资小新" | 特点：由国资委官方支持的招聘信息平台，定期发布各大央企、国企的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">全省各省级人才招聘网</div>
+                    <div class="platform-features">特点：适合留在所在省发展的求职者。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="comprehensive-platforms">
+            <h2>综合性求职网站</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">智联招聘</div>
+                    <a href="http://www.zhaopin.com" class="platform-url" target="_blank">http://www.zhaopin.com</a>
+                    <div class="platform-features">特点：全国权威的求职找工作平台，提供真实准确的全球求职和招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">前程无忧</div>
+                    <a href="http://www.51job.com" class="platform-url" target="_blank">http://www.51job.com</a>
+                    <div class="platform-features">特点：提供广泛的招聘信息和职业发展支持。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">中华英才网</div>
+                    <a href="http://www.chinahr.com" class="platform-url" target="_blank">http://www.chinahr.com</a>
+                    <div class="platform-features">特点：提供全面的招聘信息和职业发展支持。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">猎聘</div>
+                    <a href="http://www.liepin.com" class="platform-url" target="_blank">http://www.liepin.com</a>
+                    <div class="platform-features">特点：猎头资源丰富，适合有3-5年工作经验的求职者。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">BOSS直聘</div>
+                    <a href="http://www.zhipin.com" class="platform-url" target="_blank">http://www.zhipin.com</a>
+                    <div class="platform-features">特点：互联网岗位多，回复率高，适合互联网行业求职者。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">领英</div>
+                    <a href="https://www.linkedin.com" class="platform-url" target="_blank">https://www.linkedin.com</a>
+                    <div class="platform-features">特点：国际化职场社交平台，适合有海外求职意向或想进入外企的应届生。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">58同城招聘</div>
+                    <a href="http://bj.58.com/job.shtml" class="platform-url" target="_blank">http://bj.58.com/job.shtml</a>
+                    <div class="platform-features">特点：提供海量的职业招聘信息，涵盖数百种行业的招聘需求。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">智通人才网</div>
+                    <a href="http://www.job5156.com" class="platform-url" target="_blank">http://www.job5156.com</a>
+                    <div class="platform-features">特点：提供全面的招聘信息和职业发展支持。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">卓博</div>
+                    <a href="http://www.jobcn.com" class="platform-url" target="_blank">http://www.jobcn.com</a>
+                    <div class="platform-features">特点：提供全面的招聘信息和职业发展支持。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">校联人才网</div>
+                    <a href="http://www.job9151.com" class="platform-url" target="_blank">http://www.job9151.com</a>
+                    <div class="platform-features">特点：提供全面的招聘信息和职业发展支持。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="vertical-platforms">
+            <h2>垂直招聘平台</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">实习僧</div>
+                    <a href="https://www.shixiseng.com" class="platform-url" target="_blank">https://www.shixiseng.com</a>
+                    <div class="platform-features">特点：校招和实习岗位丰富，适合在校生和应届生。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">牛客</div>
+                    <a href="https://www.nowcoder.com" class="platform-url" target="_blank">https://www.nowcoder.com</a>
+                    <div class="platform-features">特点：技术类岗位的"宝藏平台"，笔经、面经资源丰富。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">拉勾网</div>
+                    <a href="http://www.lagou.com" class="platform-url" target="_blank">http://www.lagou.com</a>
+                    <div class="platform-features">特点：专注于互联网行业，信息透明，岗位更新快。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">留学人才网</div>
+                    <a href="http://www.liuxuehr.com" class="platform-url" target="_blank">http://www.liuxuehr.com</a>
+                    <div class="platform-features">特点：专注于留学人才的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">全国事业单位招聘网</div>
+                    <a href="https://www.qgsydw.com/qgsydw/index.html" class="platform-url" target="_blank">https://www.qgsydw.com/qgsydw/index.html</a>
+                    <div class="platform-features">特点：专注于事业单位的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">中智招聘——国企</div>
+                    <a href="https://zhaopin.ciic.com.cn" class="platform-url" target="_blank">https://zhaopin.ciic.com.cn</a>
+                    <div class="platform-features">特点：专注于国企的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">数英</div>
+                    <a href="https://www.digitaling.com" class="platform-url" target="_blank">https://www.digitaling.com</a>
+                    <div class="platform-features">特点：专注于数字营销和广告行业的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">银行招聘网</div>
+                    <a href="http://www.yinhangzhaopin.com" class="platform-url" target="_blank">http://www.yinhangzhaopin.com</a>
+                    <div class="platform-features">特点：专注于银行业的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">外语人才网</div>
+                    <a href="http://www.jobeast.com" class="platform-url" target="_blank">http://www.jobeast.com</a>
+                    <div class="platform-features">特点：专注于外语人才的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">高校人才网</div>
+                    <a href="http://www.gaoxiaojob.com" class="platform-url" target="_blank">http://www.gaoxiaojob.com</a>
+                    <div class="platform-features">特点：专注于高校教师的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">万行教师人才网</div>
+                    <a href="http://www.job910.com" class="platform-url" target="_blank">http://www.job910.com</a>
+                    <div class="platform-features">特点：专注于教师岗位的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">科学网——高校/学术</div>
+                    <a href="http://talent.sciencenet.cn" class="platform-url" target="_blank">http://talent.sciencenet.cn</a>
+                    <div class="platform-features">特点：专注于高校和学术机构的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">中国汽车人才网</div>
+                    <a href="http://www.carjob.com.cn" class="platform-url" target="_blank">http://www.carjob.com.cn</a>
+                    <div class="platform-features">特点：专注于汽车行业的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">石油英才网</div>
+                    <a href="http://www.oilhr.com" class="platform-url" target="_blank">http://www.oilhr.com</a>
+                    <div class="platform-features">特点：专注于石油行业的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">一览电力英才网</div>
+                    <a href="http://www.epjob88.com" class="platform-url" target="_blank">http://www.epjob88.com</a>
+                    <div class="platform-features">特点：专注于电力行业的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">国家电网人才招聘</div>
+                    <a href="http://www.cphr.com.cn/4880.html" class="platform-url" target="_blank">http://www.cphr.com.cn/4880.html</a>
+                    <div class="platform-features">特点：专注于国家电网的招聘信息。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="social-media">
+            <h2>社交媒体与人脉资源</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">脉脉</div>
+                    <a href="https://maimai.cn" class="platform-url" target="_blank">https://maimai.cn</a>
+                    <div class="platform-features">特点：职场社交平台，可查看公司评价、寻找内推机会。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">小红书</div>
+                    <a href="https://www.xiaohongshu.com" class="platform-url" target="_blank">https://www.xiaohongshu.com</a>
+                    <div class="platform-features">特点：不仅能分享生活，还能找到求职干货和内推机会。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">本地宝公众号</div>
+                    <div class="platform-features">特点：发布本地企业的招聘信息，适合打算留在本地发展的求职者。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="other-channels">
+            <h2>其他求职渠道</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">职业介绍所与猎头公司</div>
+                    <div class="platform-features">特点：与企业有深度合作，能获取内部招聘信息，适合中高端职位。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">地方性招聘网站</div>
+                    <div class="platform-features">特点：专注于本地人才招聘，与当地企业和政府部门合作紧密。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">小众平台</div>
+                    <div class="platform-features">特点：适合想进入国企、央企的应届生，招聘信息经过严格筛选，岗位稳定，福利好。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">学校就业部组织的就业群</div>
+                    <div class="platform-features">特点：可以内推，适合多加入其他学校的校招就业群。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">目标岗位公众号招聘</div>
+                    <div class="platform-features">特点：关注目标岗位的公众号，获取最新的招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">股票软件筛选+官网求职</div>
+                    <div class="platform-features">特点：利用股票软件定位所在城市及目标行业的上市公司，访问其官网或职业信息平台，查找招聘信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">参考地方榜单+直接投递</div>
+                    <div class="platform-features">特点：查阅本地百强企业或纳税名单，筛选出与专业匹配的企业，通过其招聘页面或官方账号直接投递简历。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="priority-tip animate-on-scroll">
+            建议求职者优先使用国家级平台（如国家大学生就业服务平台、中国公共招聘网）及校招渠道，辅以综合平台（智联、前程）和垂直平台（牛客、拉勾），同时关注本地化及社交资源提升效率。非网址渠道注重主动性与信息整合能力。
+        </div>
+        
+        <footer>
+            <p>更新日期：2025年4月</p>
+            <p>网页由SucofHR生成 | SucofHR.github.io</p>
+        </footer>
+    </div>
+
+    <script>
+        // Scroll animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            const sections = document.querySelectorAll('.animate-on-scroll');
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            // Add delay to each category
+            const categories = document.querySelectorAll('.category');
+            categories.forEach((category, index) => {
+                category.style.transitionDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
