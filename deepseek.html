@@ -1,0 +1,245 @@
+HTML
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>应届生求职平台指南</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 40px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        .category {
+            margin-bottom: 30px;
+        }
+        .platforms-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .platform-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .platform-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .platform-url {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        .platform-url:hover {
+            background: #2980b9;
+        }
+        .platform-features {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+        .priority-tip {
+            background: #f1c40f;
+            color: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .platforms-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>应届生求职平台指南</h1>
+    
+    <div class="category">
+        <h2>一、国家级官方就业平台（应届生首选）</h2>
+        <div class="platforms-container">
+            <div class="platform-card">
+                <div class="platform-name">国家大学生就业服务平台</div>
+                <a href="https://24365.smartedu.cn" class="platform-url" target="_blank">https://24365.smartedu.cn</a>
+                <div class="platform-features">教育部建设，24小时全年无休服务，覆盖校招、简历投递、生涯课程、基层就业指导等。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">中国公共招聘网</div>
+                <a href="http://job.mohrss.gov.cn" class="platform-url" target="_blank">http://job.mohrss.gov.cn</a>
+                <div class="platform-features">人社部主办，全国性职位信息聚合，含就业政策解读，适合各类求职者。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">国聘网</div>
+                <a href="https://www.iguopin.com" class="platform-url" target="_blank">https://www.iguopin.com</a>
+                <div class="platform-features">国资委指导，专注央企、国企及大型企业招聘，定期举办全国性大型招聘活动。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">中央和国家机关所属事业单位公开招聘服务平台</div>
+                <a href="http://www.mohrss.gov.cn/SYrlzyhshbzb/fwyd/SYkaoshizhaopin/zyhgjjgsydwgkzp" class="platform-url" target="_blank">点击访问</a>
+                <div class="platform-features">发布中央及事业单位招聘公告，流程透明，适配稳定岗位需求。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">就业在线</div>
+                <a href="https://www.jobonline.cn" class="platform-url" target="_blank">https://www.jobonline.cn</a>
+                <div class="platform-features">人社部建设，整合全国机构信息，支持简历投递及智能岗位推荐。</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <h2>二、综合招聘平台</h2>
+        <div class="platforms-container">
+            <div class="platform-card">
+                <div class="platform-name">智联招聘</div>
+                <a href="http://www.zhaopin.com" class="platform-url" target="_blank">http://www.zhaopin.com</a>
+                <div class="platform-features">传统行业优势明显，简历匹配精准，覆盖全类型企业。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">前程无忧</div>
+                <a href="http://www.51job.com" class="platform-url" target="_blank">http://www.51job.com</a>
+                <div class="platform-features">国企/外企资源多，校招频道便捷，但需筛选高匹配岗位。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">BOSS直聘</div>
+                <a href="http://www.zhipin.com" class="platform-url" target="_blank">http://www.zhipin.com</a>
+                <div class="platform-features">互联网岗位居多，直接对话招聘方，适合高效沟通。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">猎聘</div>
+                <a href="http://www.liepin.com" class="platform-url" target="_blank">http://www.liepin.com</a>
+                <div class="platform-features">猎头及大厂资源多，中高端职位为主，适配有一定经验者。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">应届生求职网</div>
+                <a href="http://www.yingjiesheng.com" class="platform-url" target="_blank">http://www.yingjiesheng.com</a>
+                <div class="platform-features">校园招聘信息聚合，提供笔面试资料及论坛交流。</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <h2>三、垂直行业及特色平台</h2>
+        <div class="platforms-container">
+            <div class="platform-card">
+                <div class="platform-name">牛客网</div>
+                <a href="https://www.nowcoder.com" class="platform-url" target="_blank">https://www.nowcoder.com</a>
+                <div class="platform-features">技术类岗位聚集，含内推码、面经笔试题库，应届生友好。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">拉勾网</div>
+                <a href="http://www.lagou.com" class="platform-url" target="_blank">http://www.lagou.com</a>
+                <div class="platform-features">专注互联网行业，信息更新快，岗位描述清晰。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">实习僧</div>
+                <a href="https://www.shixiseng.com" class="platform-url" target="_blank">https://www.shixiseng.com</a>
+                <div class="platform-features">校招及实习机会集中，大厂实习资源丰富。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">银行招聘网</div>
+                <a href="http://www.yinhangzhaopin.com" class="platform-url" target="_blank">http://www.yinhangzhaopin.com</a>
+                <div class="platform-features">银行业岗位专精，覆盖全国银行及分支机构招聘。</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <h2>四、非网址求职渠道</h2>
+        <div class="platforms-container">
+            <div class="platform-card">
+                <div class="platform-name">高校渠道</div>
+                <div class="platform-features">学校就业信息群：内推机会多，需主动加入本校或跨校群组。高校就业官网：各校定期更新宣讲会及合作企业信息。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">本地化渠道</div>
+                <div class="platform-features">本地宝公众号（如"成都本地宝招聘"）：发布本地国企、民企招聘，适配区域发展选择。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">社交及新媒体</div>
+                <div class="platform-features">脉脉：职场社交+内推；小红书：求职干货及内推分享。领英：国际化机会与外企资源。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">行业展会/研讨会</div>
+                <div class="platform-features">参与糖酒会、汽摩展等活动，直接接触企业招聘官获取机会。</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">猎头及职业介绍所</div>
+                <div class="platform-features">适合目标为中高端岗位，需与企业深度合作的机构联系。</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <h2>五、其他资源推荐</h2>
+        <div class="platforms-container">
+            <div class="platform-card">
+                <div class="platform-name">全国事业单位招聘网</div>
+                <a href="https://www.qgsydw.com/qgsydw" class="platform-url" target="_blank">https://www.qgsydw.com/qgsydw</a>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">万行教师人才网</div>
+                <a href="http://www.job910.com" class="platform-url" target="_blank">http://www.job910.com</a>
+                <div class="platform-features">教育行业定向</div>
+            </div>
+            
+            <div class="platform-card">
+                <div class="platform-name">国资小新（公众号/小程序）</div>
+                <div class="platform-features">国资委官方发布央企招聘信息</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="priority-tip">
+        应届生优先使用国家级平台（如24365、中国公共招聘网）及校招渠道，辅以综合平台（智联、前程）和垂直平台（牛客、拉勾），关注本地化及社交资源提升效率。非网址渠道注重主动性与信息整合能力。
+    </div>
+</body>
+</html>
