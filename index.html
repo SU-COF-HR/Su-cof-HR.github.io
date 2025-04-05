@@ -1,0 +1,170 @@
+HTML
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SucofHR的导航站</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .nav-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
+        }
+        
+        .nav-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .nav-card h2 {
+            color: var(--secondary);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-card p {
+            color: var(--gray);
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SucofHR的资源导航</h1>
+            <p class="subtitle">精选资源合集，点击下方卡片访问</p>
+        </header>
+        
+        <div class="nav-grid">
+            <!-- 导航卡片1 - 已有文件 -->
+            <div class="nav-card">
+                <a href="wenxiaobai.html">
+                    <h2>应届生求职指南</h2>
+                    <p>精选优质求职资源，助力应届生职业启航</p>
+                </a>
+            </div>
+            
+            <!-- 导航卡片2 - 已有文件 -->
+            <div class="nav-card">
+                <a href="deepseek.html">
+                    <h2>求职平台指南</h2>
+                    <p>国家级和综合招聘平台资源汇总</p>
+                </a>
+            </div>
+            
+            <!-- 导航卡片3 - 示例新文件 -->
+            <div class="nav-card">
+                <a href="doubao.html">
+                    <h2>示例页面</h2>
+                    <p>这是一个示例页面，您可以自由替换</p>
+                </a>
+            </div>
+            
+            <!-- 您可以在这里添加更多导航卡片 -->
+            <!-- 复制下面的代码块来添加新页面 -->
+            <!--
+            <div class="nav-card">
+                <a href="新文件名.html">
+                    <h2>页面标题</h2>
+                    <p>页面简短描述</p>
+                </a>
+            </div>
+            -->
+        </div>
+        
+        <footer>
+            <p>© 2025 SucofHR的GitHub Pages | 由GitHub托管</p>
+            <p>最后更新: 2025年4月</p>
+        </footer>
+    </div>
+</body>
+</html>
