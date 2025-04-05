@@ -1,0 +1,469 @@
+HTML
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>应届生求职平台指南 | 专业求职导航</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --glass: rgba(255, 255, 255, 0.15);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            --border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .category {
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .category.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .platforms-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .platform-card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
+        }
+
+        .platform-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .platform-name::before {
+            content: '🔹';
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .platform-url {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+        }
+
+        .platform-url:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .platform-url::before {
+            content: '🔗';
+            margin-right: 0.5rem;
+        }
+
+        .platform-features {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .priority-tip {
+            background: linear-gradient(to right, rgba(76, 201, 240, 0.1), rgba(72, 149, 239, 0.1));
+            color: var(--dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 3rem;
+            font-weight: 500;
+            border-left: 4px solid var(--success);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .priority-tip::before {
+            content: '💡';
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            opacity: 0.2;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .platforms-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .priority-tip::before {
+                display: none;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll animation */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>应届生求职平台指南</h1>
+            <p class="subtitle">精选优质求职资源，助力应届生职业启航</p>
+        </header>
+        
+        <div class="category animate-on-scroll" id="category1">
+            <h2>国家级官方就业平台</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">国家大学生就业服务平台</div>
+                    <a href="https://24365.smartedu.cn" class="platform-url" target="_blank">https://24365.smartedu.cn</a>
+                    <div class="platform-features">教育部建设，24小时全年无休服务，覆盖校招、简历投递、生涯课程、基层就业指导等。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">中国公共招聘网</div>
+                    <a href="http://job.mohrss.gov.cn" class="platform-url" target="_blank">http://job.mohrss.gov.cn</a>
+                    <div class="platform-features">人社部主办，全国性职位信息聚合，含就业政策解读，适合各类求职者。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">国聘网</div>
+                    <a href="https://www.iguopin.com" class="platform-url" target="_blank">https://www.iguopin.com</a>
+                    <div class="platform-features">国资委指导，专注央企、国企及大型企业招聘，定期举办全国性大型招聘活动。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">中央和国家机关所属事业单位公开招聘服务平台</div>
+                    <a href="http://www.mohrss.gov.cn/SYrlzyhshbzb/fwyd/SYkaoshizhaopin/zyhgjjgsydwgkzp" class="platform-url" target="_blank">点击访问</a>
+                    <div class="platform-features">发布中央及事业单位招聘公告，流程透明，适配稳定岗位需求。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">就业在线</div>
+                    <a href="https://www.jobonline.cn" class="platform-url" target="_blank">https://www.jobonline.cn</a>
+                    <div class="platform-features">人社部建设，整合全国机构信息，支持简历投递及智能岗位推荐。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="category2">
+            <h2>综合招聘平台</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">智联招聘</div>
+                    <a href="http://www.zhaopin.com" class="platform-url" target="_blank">http://www.zhaopin.com</a>
+                    <div class="platform-features">传统行业优势明显，简历匹配精准，覆盖全类型企业。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">前程无忧</div>
+                    <a href="http://www.51job.com" class="platform-url" target="_blank">http://www.51job.com</a>
+                    <div class="platform-features">国企/外企资源多，校招频道便捷，但需筛选高匹配岗位。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">BOSS直聘</div>
+                    <a href="http://www.zhipin.com" class="platform-url" target="_blank">http://www.zhipin.com</a>
+                    <div class="platform-features">互联网岗位居多，直接对话招聘方，适合高效沟通。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">猎聘</div>
+                    <a href="http://www.liepin.com" class="platform-url" target="_blank">http://www.liepin.com</a>
+                    <div class="platform-features">猎头及大厂资源多，中高端职位为主，适配有一定经验者。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">应届生求职网</div>
+                    <a href="http://www.yingjiesheng.com" class="platform-url" target="_blank">http://www.yingjiesheng.com</a>
+                    <div class="platform-features">校园招聘信息聚合，提供笔面试资料及论坛交流。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="category3">
+            <h2>垂直行业及特色平台</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">牛客网</div>
+                    <a href="https://www.nowcoder.com" class="platform-url" target="_blank">https://www.nowcoder.com</a>
+                    <div class="platform-features">技术类岗位聚集，含内推码、面经笔试题库，应届生友好。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">拉勾网</div>
+                    <a href="http://www.lagou.com" class="platform-url" target="_blank">http://www.lagou.com</a>
+                    <div class="platform-features">专注互联网行业，信息更新快，岗位描述清晰。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">实习僧</div>
+                    <a href="https://www.shixiseng.com" class="platform-url" target="_blank">https://www.shixiseng.com</a>
+                    <div class="platform-features">校招及实习机会集中，大厂实习资源丰富。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">银行招聘网</div>
+                    <a href="http://www.yinhangzhaopin.com" class="platform-url" target="_blank">http://www.yinhangzhaopin.com</a>
+                    <div class="platform-features">银行业岗位专精，覆盖全国银行及分支机构招聘。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="category4">
+            <h2>非网址求职渠道</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">高校渠道</div>
+                    <div class="platform-features">学校就业信息群：内推机会多，需主动加入本校或跨校群组。高校就业官网：各校定期更新宣讲会及合作企业信息。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">本地化渠道</div>
+                    <div class="platform-features">本地宝公众号（如"成都本地宝招聘"）：发布本地国企、民企招聘，适配区域发展选择。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">社交及新媒体</div>
+                    <div class="platform-features">脉脉：职场社交+内推；小红书：求职干货及内推分享。领英：国际化机会与外企资源。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">行业展会/研讨会</div>
+                    <div class="platform-features">参与糖酒会、汽摩展等活动，直接接触企业招聘官获取机会。</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">猎头及职业介绍所</div>
+                    <div class="platform-features">适合目标为中高端岗位，需与企业深度合作的机构联系。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="category5">
+            <h2>其他资源推荐</h2>
+            <div class="platforms-container">
+                <div class="platform-card">
+                    <div class="platform-name">全国事业单位招聘网</div>
+                    <a href="https://www.qgsydw.com/qgsydw" class="platform-url" target="_blank">https://www.qgsydw.com/qgsydw</a>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">万行教师人才网</div>
+                    <a href="http://www.job910.com" class="platform-url" target="_blank">http://www.job910.com</a>
+                    <div class="platform-features">教育行业定向</div>
+                </div>
+                
+                <div class="platform-card">
+                    <div class="platform-name">国资小新（公众号/小程序）</div>
+                    <div class="platform-features">国资委官方发布央企招聘信息</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="priority-tip animate-on-scroll">
+            应届生优先使用国家级平台（如24365、中国公共招聘网）及校招渠道，辅以综合平台（智联、前程）和垂直平台（牛客、拉勾），关注本地化及社交资源提升效率。非网址渠道注重主动性与信息整合能力。
+        </div>
+        
+        <footer>
+            <p>更新日期：2023年11月15日</p>
+            <p>网页由问小白生成，仅供参考 | wenxiaobai.com</p>
+        </footer>
+    </div>
+
+    <script>
+        // Scroll animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            const sections = document.querySelectorAll('.animate-on-scroll');
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            // Add delay to each category
+            const categories = document.querySelectorAll('.category');
+            categories.forEach((category, index) => {
+                category.style.transitionDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
