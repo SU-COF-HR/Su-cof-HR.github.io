@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>求职匹配推荐表单</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0; /* Remove default body margin */
+            padding: 10px; /* Add some padding around the content */
+            box-sizing: border-box;
+        }
+        /* Responsive container for the table */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling on small screens */
+            width: 100%;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            /* Use a minimum width to prevent extreme squishing, triggering scroll earlier */
+            min-width: 1200px; /* Adjust as needed based on content complexity */
+            table-layout: auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top; /* Align content to top */
+            white-space: normal; /* Allow text wrapping */
+            word-wrap: break-word; /* Break long words if necessary */
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            position: sticky; /* Make header sticky during vertical scroll if table is long */
+            top: 0;
+            z-index: 1; /* Ensure header stays above content */
+        }
+        /* First column (序号) styling */
+        th:first-child, td:first-child {
+            text-align: center;
+            width: 50px; /* Fixed width for sequence number */
+            min-width: 50px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        /* Link styling */
+        .link-item a {
+            color: #0066cc;
+            text-decoration: none;
+            word-break: break-all; /* Break long URLs */
+            margin-right: 10px; /* Space between link and buttons */
+        }
+        .link-item a:hover {
+            text-decoration: underline;
+        }
+        /* Status slider and dates */
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            min-width: 250px; /* Ensure enough width for controls */
+        }
+        .slider-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .slider-group label {
+            margin-right: 10px;
+            min-width: 80px; /* Align labels */
+        }
+        .slider-group input[type="range"] {
+            flex-grow: 1;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+         .slider-group .status-label {
+            font-weight: bold;
+            min-width: 80px; /* Width for status text */
+            text-align: right;
+        }
+        .date-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            margin-left: 10px; /* Indent dates */
+        }
+         .date-group label {
+            margin-right: 5px;
+            min-width: 70px; /* Align date labels */
+            font-size: 0.9em;
+        }
+         .date-group input[type="date"] {
+            padding: 2px;
+            font-size: 0.9em;
+            max-width: 130px; /* Limit date input width */
+         }
+         .notes-textarea {
+             width: 98%; /* Slightly less than 100% for padding */
+             min-height: 60px;
+             resize: vertical;
+             margin-top: 5px;
+             padding: 5px;
+             font-size: 0.9em;
+             box-sizing: border-box;
+         }
+         /* Style for disabled date inputs */
+        input[type="date"]:disabled {
+            background-color: #eee;
+            cursor: not-allowed;
+        }
+
+        /* Styles for URL input section */
+         .link-container {
+             margin-bottom: 10px; /* Space below existing links */
+         }
+         .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Push buttons to the right */
+            padding: 3px 0;
+            border-bottom: 1px dotted #eee; /* Separator between links */
+         }
+         .link-item:last-child {
+             border-bottom: none;
+         }
+         .link-item span { /* Span to hold the link text and url */
+             flex-grow: 1;
+             margin-right: 10px;
+         }
+         .link-item button {
+            padding: 2px 5px;
+            font-size: 0.8em;
+            margin-left: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+         }
+          .link-item button:hover {
+             background-color: #eee;
+         }
+
+        .url-input-section {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller cell width */
+            gap: 5px; /* Space between elements */
+            align-items: center;
+            margin-top: 10px; /* Space above input section */
+            border-top: 1px dashed #ccc; /* Separator */
+            padding-top: 10px;
+        }
+        .url-input-section input[type="url"],
+        .url-input-section input[type="text"] {
+             padding: 4px;
+             font-size: 0.9em;
+             border: 1px solid #ccc;
+             flex-grow: 1; /* Allow inputs to grow */
+             min-width: 100px; /* Minimum width */
+             margin-bottom: 5px; /* Space below inputs if they wrap */
+        }
+         .url-input-section button {
+            padding: 4px 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            margin-bottom: 5px; /* Space below button if it wraps */
+         }
+         .url-input-section button:hover {
+             background-color: #eee;
+         }
+
+        /* Column width hints (Adjust min-width as needed) */
+        th:nth-child(2), td:nth-child(2) { min-width: 150px; } /* 分类 */
+        th:nth-child(3), td:nth-child(3) { min-width: 220px; } /* 公司及匹配度 */
+        th:nth-child(4), td:nth-child(4) { min-width: 250px; } /* 推荐岗位 */
+        th:nth-child(5), td:nth-child(5) { min-width: 300px; } /* 关键原因 */
+        th:nth-child(6), td:nth-child(6) { min-width: 300px; } /* 官网网址 (increased) */
+        th:nth-child(7), td:nth-child(7) { min-width: 270px; } /* 投递状态 */
+        th:nth-child(8), td:nth-child(8) { min-width: 250px; } /* 备注 */
+
+    </style>
+</head>
+<body>
+
+<h1>求职匹配推荐表单</h1>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>分类</th>
+                <th>公司名称 (类型) 及匹配度</th>
+                <th>推荐岗位</th>
+                <th>关键原因/备注 (综合各模型观点)</th>
+                <th>投递官网网址</th>
+                <th>投递状态</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                <td>**宁德时代 CATL** (民企/龙头) ★★★★★</td>
+                <td>电解液/材料研发工程师、先行技术研究员、锌电池研发工程师、储能系统研发</td>
+                <td>全球龙头，研发投入大，技术路线广；您的电解液/界面/锌电池研究背景高度契合其前瞻布局和储能需求。 (多模型高频推荐)</td>
+                <td>
+                    <div id="link-container-1" class="link-container">
+                        </div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-1" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-1" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('1')">添加链接</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-1">进度:</label>
+                            <input type="range" id="status-slider-1" name="status-slider-1" min="0" max="3" value="0" step="1" oninput="updateStatus('1')">
+                            <span id="status-label-1" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-1">投递时间:</label>
+                            <input type="date" id="applied-date-1" name="applied-date-1" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-1">笔试面试:</label>
+                            <input type="date" id="interview-date-1" name="interview-date-1" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-1">Offer时间:</label>
+                            <input type="date" id="offer-date-1" name="offer-date-1" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-1" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                <td>**比亚迪 BYD** (民企/龙头) ★★★★★</td>
+                <td>电池材料研发(电解液/负极)、储能技术研发工程师、电化学材料研究员</td>
+                <td>垂直整合(车+电池)，储能/动力电池技术领先；您的锌负极沉积/界面调控经验对其电池安全、储能技术有价值。 (多模型高频推荐)</td>
+                 <td>
+                    <div id="link-container-2" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-2" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-2" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('2')">添加链接</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-2">进度:</label>
+                            <input type="range" id="status-slider-2" name="status-slider-2" min="0" max="3" value="0" step="1" oninput="updateStatus('2')">
+                            <span id="status-label-2" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-2">投递时间:</label>
+                            <input type="date" id="applied-date-2" name="applied-date-2" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-2">笔试面试:</label>
+                            <input type="date" id="interview-date-2" name="interview-date-2" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-2">Offer时间:</label>
+                            <input type="date" id="offer-date-2" name="offer-date-2" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-2" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                <td>**中创新航 CALB** (国资背景) ★★★★☆</td>
+                <td>电芯/电解液/材料研发工程师、先进材料研发</td>
+                <td>国内领先动力电池企业，快速发展期；您的电化学背景和材料开发经验符合其岗位需求。 (多模型推荐)</td>
+                 <td>
+                    <div id="link-container-3" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-3" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-3" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('3')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-3">进度:</label>
+                            <input type="range" id="status-slider-3" name="status-slider-3" min="0" max="3" value="0" step="1" oninput="updateStatus('3')">
+                            <span id="status-label-3" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-3">投递时间:</label>
+                            <input type="date" id="applied-date-3" name="applied-date-3" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-3">笔试面试:</label>
+                            <input type="date" id="interview-date-3" name="interview-date-3" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-3">Offer时间:</label>
+                            <input type="date" id="offer-date-3" name="offer-date-3" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-3" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                <td>4</td>
+                <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                <td>**亿纬锂能 EVE Energy** (民企) ★★★★☆</td>
+                <td>锂/钠/固态/储能电池研发工程师、电解液开发工程师</td>
+                <td>产品线广泛(消费/动力/储能)，研发方向多元；您的电解液、锌基电容器经验有应用空间。 (多模型推荐)</td>
+                 <td>
+                    <div id="link-container-4" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-4" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-4" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('4')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-4">进度:</label>
+                            <input type="range" id="status-slider-4" name="status-slider-4" min="0" max="3" value="0" step="1" oninput="updateStatus('4')">
+                            <span id="status-label-4" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-4">投递时间:</label>
+                            <input type="date" id="applied-date-4" name="applied-date-4" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-4">笔试面试:</label>
+                            <input type="date" id="interview-date-4" name="interview-date-4" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-4">Offer时间:</label>
+                            <input type="date" id="offer-date-4" name="offer-date-4" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-4" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                <td>5</td>
+                <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                <td>**国轩高科 Gotion High-Tech** (民企) ★★★★☆</td>
+                <td>电池化学体系研发、电解液工程师、储能研发工程师、正极材料工艺工程师</td>
+                <td>布局LFP及新技术(钠电/半固态)；您的电解液和正极材料经验(尤其是钒氧化物工艺)可匹配。 (多模型推荐)</td>
+                 <td>
+                    <div id="link-container-5" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-5" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-5" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('5')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-5">进度:</label>
+                            <input type="range" id="status-slider-5" name="status-slider-5" min="0" max="3" value="0" step="1" oninput="updateStatus('5')">
+                            <span id="status-label-5" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-5">投递时间:</label>
+                            <input type="date" id="applied-date-5" name="applied-date-5" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-5">笔试面试:</label>
+                            <input type="date" id="interview-date-5" name="interview-date-5" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-5">Offer时间:</label>
+                            <input type="date" id="offer-date-5" name="offer-date-5" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-5" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                 <td>6</td>
+                 <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                 <td>**蜂巢能源 SVOLT Energy** (民企) ★★★★☆</td>
+                 <td>电芯/电解液研发、新体系研究员(锌基/液流/固态/锂硫等)、前沿研究部</td>
+                 <td>技术路线新颖(无钴/固态)，重视前沿研究；您的锌电池/电解液设计经验契合其探索方向。 (多模型推荐，特别提及前沿研究)</td>
+                 <td>
+                    <div id="link-container-6" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-6" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-6" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('6')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-6">进度:</label>
+                            <input type="range" id="status-slider-6" name="status-slider-6" min="0" max="3" value="0" step="1" oninput="updateStatus('6')">
+                            <span id="status-label-6" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-6">投递时间:</label>
+                            <input type="date" id="applied-date-6" name="applied-date-6" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-6">笔试面试:</label>
+                            <input type="date" id="interview-date-6" name="interview-date-6" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-6">Offer时间:</label>
+                            <input type="date" id="offer-date-6" name="offer-date-6" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-6" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>7</td>
+                 <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                 <td>**欣旺达 Sunwoda** (民企) ★★★☆☆</td>
+                 <td>动力/储能电池研发工程师、电解液工程师、测试工程师</td>
+                 <td>从消费电池扩展至动力/储能，研发需求增长；基础电化学技能匹配。 (ChatGPT提及)</td>
+                 <td>
+                    <div id="link-container-7" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-7" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-7" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('7')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-7">进度:</label>
+                            <input type="range" id="status-slider-7" name="status-slider-7" min="0" max="3" value="0" step="1" oninput="updateStatus('7')">
+                            <span id="status-label-7" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-7">投递时间:</label>
+                            <input type="date" id="applied-date-7" name="applied-date-7" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-7">笔试面试:</label>
+                            <input type="date" id="interview-date-7" name="interview-date-7" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-7">Offer时间:</label>
+                            <input type="date" id="offer-date-7" name="offer-date-7" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-7" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                 <td>8</td>
+                 <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                 <td>**孚能科技 Farasis Energy** (民企) ★★★☆☆</td>
+                 <td>材料研发工程师 (电解液/负极)、电芯开发工程师</td>
+                 <td>专注软包电池，技术有特色；电解液/负极经验相关。 (Gemini提及)</td>
+                 <td>
+                    <div id="link-container-8" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-8" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-8" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('8')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-8">进度:</label>
+                            <input type="range" id="status-slider-8" name="status-slider-8" min="0" max="3" value="0" step="1" oninput="updateStatus('8')">
+                            <span id="status-label-8" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-8">投递时间:</label>
+                            <input type="date" id="applied-date-8" name="applied-date-8" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-8">笔试面试:</label>
+                            <input type="date" id="interview-date-8" name="interview-date-8" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-8">Offer时间:</label>
+                            <input type="date" id="offer-date-8" name="offer-date-8" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-8" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>**A. 电池制造商 (锂/钠/下一代体系)**</td>
+                <td>**蔚蓝锂芯** (民企) ★★★☆☆</td>
+                <td>材料研发、电解液设计、电芯开发</td>
+                <td>涉及前沿体系开发，电解液设计背景有一定相关性。 (ChatGPT提及)</td>
+                 <td>
+                    <div id="link-container-9" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-9" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-9" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('9')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-9">进度:</label>
+                            <input type="range" id="status-slider-9" name="status-slider-9" min="0" max="3" value="0" step="1" oninput="updateStatus('9')">
+                            <span id="status-label-9" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-9">投递时间:</label>
+                            <input type="date" id="applied-date-9" name="applied-date-9" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-9">笔试面试:</label>
+                            <input type="date" id="interview-date-9" name="interview-date-9" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-9">Offer时间:</label>
+                            <input type="date" id="offer-date-9" name="offer-date-9" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-9" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>10</td>
+                 <td>**B. 电池材料供应商 (电解液/正负极等)**</td>
+                 <td>**天赐材料 Tinci** (民企/龙头) ★★★★★</td>
+                 <td>**电解液研发工程师**、新型电解质/添加剂研究员、储能电解液开发</td>
+                 <td>**电解液全球龙头；您的双阴离子电解液设计、EES论文是极强竞争力，完美匹配。** (多模型高频强推)</td>
+                 <td>
+                    <div id="link-container-10" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-10" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-10" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('10')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-10">进度:</label>
+                            <input type="range" id="status-slider-10" name="status-slider-10" min="0" max="3" value="0" step="1" oninput="updateStatus('10')">
+                            <span id="status-label-10" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-10">投递时间:</label>
+                            <input type="date" id="applied-date-10" name="applied-date-10" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-10">笔试面试:</label>
+                            <input type="date" id="interview-date-10" name="interview-date-10" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-10">Offer时间:</label>
+                            <input type="date" id="offer-date-10" name="offer-date-10" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-10" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>**B. 电池材料供应商 (电解液/正负极等)**</td>
+                <td>**新宙邦 Capchem** (民企/龙头) ★★★★★</td>
+                <td>**电解液研发工程师**、电池化学品研发、有机氟/添加剂研究员</td>
+                <td>**电解液技术领先；您的电解液配方、界面调控、锌盐体系研究高度契合。** (多模型高频强推)</td>
+                <td>
+                    <div id="link-container-11" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-11" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-11" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('11')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-11">进度:</label>
+                            <input type="range" id="status-slider-11" name="status-slider-11" min="0" max="3" value="0" step="1" oninput="updateStatus('11')">
+                            <span id="status-label-11" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-11">投递时间:</label>
+                            <input type="date" id="applied-date-11" name="applied-date-11" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-11">笔试面试:</label>
+                            <input type="date" id="interview-date-11" name="interview-date-11" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-11">Offer时间:</label>
+                            <input type="date" id="offer-date-11" name="offer-date-11" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-11" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>12</td>
+                 <td>**B. 电池材料供应商 (电解液/正负极等)**</td>
+                 <td>**杉杉股份 Shanshan** (民企) ★★★★☆</td>
+                 <td>负极/正极/电解液研发工程师</td>
+                 <td>综合材料商(正负极/电解液)；您的负极(锌沉积经验可借鉴硅基)、正极(钒氧化物)和电解液背景均有相关性。 (多模型推荐)</td>
+                 <td>
+                    <div id="link-container-12" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-12" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-12" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('12')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-12">进度:</label>
+                            <input type="range" id="status-slider-12" name="status-slider-12" min="0" max="3" value="0" step="1" oninput="updateStatus('12')">
+                            <span id="status-label-12" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-12">投递时间:</label>
+                            <input type="date" id="applied-date-12" name="applied-date-12" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-12">笔试面试:</label>
+                            <input type="date" id="interview-date-12" name="interview-date-12" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-12">Offer时间:</label>
+                            <input type="date" id="offer-date-12" name="offer-date-12" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-12" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                 <td>13</td>
+                 <td>**B. 电池材料供应商 (电解液/正负极等)**</td>
+                 <td>**贝特瑞 BTR** (民企/龙头) ★★★★☆</td>
+                 <td>负极材料研发工程师(硅基/碳材料/锌基)、储能材料研发</td>
+                 <td>负极材料全球龙头；您的锌负极沉积/界面调控研究经验对其新型负极(锌基或借鉴思路用于硅基)开发有价值。 (多模型推荐)</td>
+                 <td>
+                    <div id="link-container-13" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-13" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-13" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('13')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-13">进度:</label>
+                            <input type="range" id="status-slider-13" name="status-slider-13" min="0" max="3" value="0" step="1" oninput="updateStatus('13')">
+                            <span id="status-label-13" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-13">投递时间:</label>
+                            <input type="date" id="applied-date-13" name="applied-date-13" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-13">笔试面试:</label>
+                            <input type="date" id="interview-date-13" name="interview-date-13" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-13">Offer时间:</label>
+                            <input type="date" id="offer-date-13" name="offer-date-13" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-13" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td>**B. 电池材料供应商 (电解液/正负极等)**</td>
+                <td>**容百科技 Ronbay** (民企/龙头) ★★★☆☆</td>
+                <td>高镍正极材料研发工程师、前沿材料研究员</td>
+                <td>高镍三元正极龙头；您的本科正极研究经历(尤其钒氧化物)有一定关联，可作为拓展方向。 (多模型提及)</td>
+                 <td>
+                    <div id="link-container-14" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-14" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-14" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('14')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-14">进度:</label>
+                            <input type="range" id="status-slider-14" name="status-slider-14" min="0" max="3" value="0" step="1" oninput="updateStatus('14')">
+                            <span id="status-label-14" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-14">投递时间:</label>
+                            <input type="date" id="applied-date-14" name="applied-date-14" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-14">笔试面试:</label>
+                            <input type="date" id="interview-date-14" name="interview-date-14" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-14">Offer时间:</label>
+                            <input type="date" id="offer-date-14" name="offer-date-14" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-14" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>15</td>
+                 <td>**B. 电池材料供应商 (电解液/正负极等)**</td>
+                 <td>**当升科技 Easpring** (国资背景) ★★★☆☆</td>
+                 <td>正极材料研发工程师(储能方向)</td>
+                 <td>主要做正极材料；您的钒氧化物正极研究背景和工艺经验(室温法)可迁移。 (Gemini, 问小白提及)</td>
+                 <td>
+                    <div id="link-container-15" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-15" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-15" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('15')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-15">进度:</label>
+                            <input type="range" id="status-slider-15" name="status-slider-15" min="0" max="3" value="0" step="1" oninput="updateStatus('15')">
+                            <span id="status-label-15" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-15">投递时间:</label>
+                            <input type="date" id="applied-date-15" name="applied-date-15" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-15">笔试面试:</label>
+                            <input type="date" id="interview-date-15" name="interview-date-15" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-15">Offer时间:</label>
+                            <input type="date" id="offer-date-15" name="offer-date-15" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-15" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                 <td>16</td>
+                 <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                 <td>**纬景储能** (民企) ★★★★★</td>
+                 <td>锌铁液流电池研发工程师、电解液配方工程师</td>
+                 <td>专注锌基液流电池，项目规模大；您的电解液设计、界面调控、高温稳定性研究非常对口。(豆包强推)</td>
+                 <td>
+                    <div id="link-container-16" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-16" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-16" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('16')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-16">进度:</label>
+                            <input type="range" id="status-slider-16" name="status-slider-16" min="0" max="3" value="0" step="1" oninput="updateStatus('16')">
+                            <span id="status-label-16" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-16">投递时间:</label>
+                            <input type="date" id="applied-date-16" name="applied-date-16" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-16">笔试面试:</label>
+                            <input type="date" id="interview-date-16" name="interview-date-16" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-16">Offer时间:</label>
+                            <input type="date" id="offer-date-16" name="offer-date-16" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-16" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>17</td>
+                 <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                 <td>**大锌能源** (民企/初创) ★★★★★</td>
+                 <td>锌基电池研发工程师、电解液开发工程师</td>
+                 <td>专注锌电池研发，初创公司研发需求迫切；您的研究方向高度契合。(阶跃AI强推)</td>
+                 <td>
+                    <div id="link-container-17" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-17" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-17" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('17')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-17">进度:</label>
+                            <input type="range" id="status-slider-17" name="status-slider-17" min="0" max="3" value="0" step="1" oninput="updateStatus('17')">
+                            <span id="status-label-17" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-17">投递时间:</label>
+                            <input type="date" id="applied-date-17" name="applied-date-17" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-17">笔试面试:</label>
+                            <input type="date" id="interview-date-17" name="interview-date-17" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-17">Offer时间:</label>
+                            <input type="date" id="offer-date-17" name="offer-date-17" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-17" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                <td>**金羽新能源** (民企) ★★★★☆</td>
+                <td>锌离子电池电解液研究员、材料开发工程师</td>
+                <td>拥有锌离子电解液专利；您的EES论文(双阴离子电解液)具互补性。(阶跃AI推荐)</td>
+                 <td>
+                    <div id="link-container-18" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-18" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-18" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('18')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-18">进度:</label>
+                            <input type="range" id="status-slider-18" name="status-slider-18" min="0" max="3" value="0" step="1" oninput="updateStatus('18')">
+                            <span id="status-label-18" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-18">投递时间:</label>
+                            <input type="date" id="applied-date-18" name="applied-date-18" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-18">笔试面试:</label>
+                            <input type="date" id="interview-date-18" name="interview-date-18" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-18">Offer时间:</label>
+                            <input type="date" id="offer-date-18" name="offer-date-18" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-18" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>19</td>
+                 <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                 <td>**海四达电源** (民企) ★★★★☆</td>
+                 <td>锌电池电解液研发工程师、正极材料研发</td>
+                 <td>明确布局锌电池；您的双调控电解液(富有机界面抑制枝晶)可解决其技术痛点。(豆包推荐)</td>
+                 <td>
+                    <div id="link-container-19" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-19" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-19" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('19')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-19">进度:</label>
+                            <input type="range" id="status-slider-19" name="status-slider-19" min="0" max="3" value="0" step="1" oninput="updateStatus('19')">
+                            <span id="status-label-19" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-19">投递时间:</label>
+                            <input type="date" id="applied-date-19" name="applied-date-19" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-19">笔试面试:</label>
+                            <input type="date" id="interview-date-19" name="interview-date-19" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-19">Offer时间:</label>
+                            <input type="date" id="offer-date-19" name="offer-date-19" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-19" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>20</td>
+                 <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                 <td>**渤海化学** (上市企业) ★★★★☆</td>
+                 <td>水系锌离子电池研发工程师、储能材料研究员</td>
+                 <td>已布局水系锌离子电池，中试阶段需电解液优化经验。(阶跃AI推荐)</td>
+                 <td>
+                    <div id="link-container-20" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-20" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-20" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('20')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-20">进度:</label>
+                            <input type="range" id="status-slider-20" name="status-slider-20" min="0" max="3" value="0" step="1" oninput="updateStatus('20')">
+                            <span id="status-label-20" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-20">投递时间:</label>
+                            <input type="date" id="applied-date-20" name="applied-date-20" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-20">笔试面试:</label>
+                            <input type="date" id="interview-date-20" name="interview-date-20" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-20">Offer时间:</label>
+                            <input type="date" id="offer-date-20" name="offer-date-20" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-20" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                <td>**世名科技** (上市企业) ★★★☆☆</td>
+                <td>锌镍电池材料研发工程师、储能技术研究员</td>
+                <td>锌镍电池需电解液匹配，锌沉积调控经验可应用。(阶跃AI推荐)</td>
+                <td>
+                    <div id="link-container-21" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-21" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-21" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('21')">添加链接</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-21">进度:</label>
+                            <input type="range" id="status-slider-21" name="status-slider-21" min="0" max="3" value="0" step="1" oninput="updateStatus('21')">
+                            <span id="status-label-21" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-21">投递时间:</label>
+                            <input type="date" id="applied-date-21" name="applied-date-21" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-21">笔试面试:</label>
+                            <input type="date" id="interview-date-21" name="interview-date-21" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-21">Offer时间:</label>
+                            <input type="date" id="offer-date-21" name="offer-date-21" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-21" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                <td>**中海储能** (国资背景) ★★★★☆</td>
+                <td>液流电池电解液开发工程师、储能系统研究员</td>
+                <td>铁铬液流电池领先，电解液需求大；界面调控经验可迁移。(阶跃AI推荐)</td>
+                <td>
+                    <div id="link-container-22" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-22" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-22" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('22')">添加链接</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-22">进度:</label>
+                            <input type="range" id="status-slider-22" name="status-slider-22" min="0" max="3" value="0" step="1" oninput="updateStatus('22')">
+                            <span id="status-label-22" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-22">投递时间:</label>
+                            <input type="date" id="applied-date-22" name="applied-date-22" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-22">笔试面试:</label>
+                            <input type="date" id="interview-date-22" name="interview-date-22" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-22">Offer时间:</label>
+                            <input type="date" id="offer-date-22" name="offer-date-22" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-22" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                <td>**湖南银峰新能源** (民企) ★★★☆☆</td>
+                <td>全钒液流电池电解液工程师、储能系统集成</td>
+                <td>全钒液流需电解液优化，正极材料经验有参考价值。(阶跃AI推荐)</td>
+                <td>
+                    <div id="link-container-23" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-23" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-23" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('23')">添加链接</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-23">进度:</label>
+                            <input type="range" id="status-slider-23" name="status-slider-23" min="0" max="3" value="0" step="1" oninput="updateStatus('23')">
+                            <span id="status-label-23" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-23">投递时间:</label>
+                            <input type="date" id="applied-date-23" name="applied-date-23" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-23">笔试面试:</label>
+                            <input type="date" id="interview-date-23" name="interview-date-23" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-23">Offer时间:</label>
+                            <input type="date" id="offer-date-23" name="offer-date-23" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-23" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                <td>**寰泰储能** (合资企业) ★★★☆☆</td>
+                <td>全钒电解液工艺工程师、储能电池研究员</td>
+                <td>聚焦全钒液流，材料合成经验匹配。(阶跃AI推荐)</td>
+                 <td>
+                     <div id="link-container-24" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-24" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-24" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('24')">添加链接</button>
+                    </div>
+                </td>
+                <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-24">进度:</label>
+                            <input type="range" id="status-slider-24" name="status-slider-24" min="0" max="3" value="0" step="1" oninput="updateStatus('24')">
+                            <span id="status-label-24" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-24">投递时间:</label>
+                            <input type="date" id="applied-date-24" name="applied-date-24" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-24">笔试面试:</label>
+                            <input type="date" id="interview-date-24" name="interview-date-24" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-24">Offer时间:</label>
+                            <input type="date" id="offer-date-24" name="offer-date-24" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-24" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                <td>25</td>
+                <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                <td>**清陶能源** (民企) ★★★☆☆</td>
+                <td>全固态电池研发(材料/电解质/电芯)</td>
+                <td>固态电池方向；您的电化学和界面研究背景有一定相关性。(ChatGPT提及)</td>
+                <td>
+                     <div id="link-container-25" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-25" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-25" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('25')">添加链接</button>
+                    </div>
+                </td>
+                <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-25">进度:</label>
+                            <input type="range" id="status-slider-25" name="status-slider-25" min="0" max="3" value="0" step="1" oninput="updateStatus('25')">
+                            <span id="status-label-25" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-25">投递时间:</label>
+                            <input type="date" id="applied-date-25" name="applied-date-25" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-25">笔试面试:</label>
+                            <input type="date" id="interview-date-25" name="interview-date-25" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-25">Offer时间:</label>
+                            <input type="date" id="offer-date-25" name="offer-date-25" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-25" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td>**C. 锌电池/液流电池/新兴储能技术专项**</td>
+                <td>**中科海钠 / 传艺科技** (民企) ★★★☆☆</td>
+                <td>钠离子电池研发(正负极/电解液)</td>
+                <td>钠离子电池方向；您的电解液和正极经验可迁移。(ChatGPT, 豆包提及)</td>
+                 <td>
+                     <div id="link-container-26" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-26" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-26" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('26')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-26">进度:</label>
+                            <input type="range" id="status-slider-26" name="status-slider-26" min="0" max="3" value="0" step="1" oninput="updateStatus('26')">
+                            <span id="status-label-26" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-26">投递时间:</label>
+                            <input type="date" id="applied-date-26" name="applied-date-26" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-26">笔试面试:</label>
+                            <input type="date" id="interview-date-26" name="interview-date-26" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-26">Offer时间:</label>
+                            <input type="date" id="offer-date-26" name="offer-date-26" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-26" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>27</td>
+                 <td>**D. 新能源汽车制造商 (主机厂)**</td>
+                 <td>**吉利汽车 Geely** (民企) ★★★☆☆</td>
+                 <td>电池研发工程师、储能系统工程师、电池材料研究员</td>
+                 <td>旗下有电池业务布局；基础电化学技能匹配。 (Gemini, ChatGPT提及)</td>
+                 <td>
+                    <div id="link-container-27" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-27" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-27" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('27')">添加链接</button>
+                    </div>
+                </td>
+                  <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-27">进度:</label>
+                            <input type="range" id="status-slider-27" name="status-slider-27" min="0" max="3" value="0" step="1" oninput="updateStatus('27')">
+                            <span id="status-label-27" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-27">投递时间:</label>
+                            <input type="date" id="applied-date-27" name="applied-date-27" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-27">笔试面试:</label>
+                            <input type="date" id="interview-date-27" name="interview-date-27" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-27">Offer时间:</label>
+                            <input type="date" id="offer-date-27" name="offer-date-27" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-27" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>28</td>
+                 <td>**D. 新能源汽车制造商 (主机厂)**</td>
+                 <td>**上汽集团 SAIC** (国企) ★★★☆☆</td>
+                 <td>新能源电池系统工程师、电池技术研究员</td>
+                 <td>旗下有电池系统研发制造布局。 (Gemini提及)</td>
+                 <td>
+                    <div id="link-container-28" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-28" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-28" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('28')">添加链接</button>
+                    </div>
+                </td>
+                  <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-28">进度:</label>
+                            <input type="range" id="status-slider-28" name="status-slider-28" min="0" max="3" value="0" step="1" oninput="updateStatus('28')">
+                            <span id="status-label-28" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-28">投递时间:</label>
+                            <input type="date" id="applied-date-28" name="applied-date-28" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-28">笔试面试:</label>
+                            <input type="date" id="interview-date-28" name="interview-date-28" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-28">Offer时间:</label>
+                            <input type="date" id="offer-date-28" name="offer-date-28" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-28" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>29</td>
+                 <td>**D. 新能源汽车制造商 (主机厂)**</td>
+                 <td>**广汽集团 GAC** (国企) ★★★☆☆</td>
+                 <td>电池研发工程师 (电芯/材料方向)</td>
+                 <td>成立自主电池公司，有研发需求。 (Gemini提及)</td>
+                 <td>
+                    <div id="link-container-29" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-29" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-29" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('29')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-29">进度:</label>
+                            <input type="range" id="status-slider-29" name="status-slider-29" min="0" max="3" value="0" step="1" oninput="updateStatus('29')">
+                            <span id="status-label-29" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-29">投递时间:</label>
+                            <input type="date" id="applied-date-29" name="applied-date-29" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-29">笔试面试:</label>
+                            <input type="date" id="interview-date-29" name="interview-date-29" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-29">Offer时间:</label>
+                            <input type="date" id="offer-date-29" name="offer-date-29" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-29" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>30</td>
+                 <td>**D. 新能源汽车制造商 (主机厂)**</td>
+                 <td>**蔚来/小鹏/理想** (民企/新势力) ★★★☆☆</td>
+                 <td>电池(系统/研发/材料)工程师</td>
+                 <td>重视电池技术，可能涉及电芯层面的研究或合作开发；但需注意岗位是否偏系统集成/BMS。(Gemini, ChatGPT, 问小白提及-注意区分)</td>
+                 <td>
+                    <div id="link-container-30" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-30" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-30" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('30')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-30">进度:</label>
+                            <input type="range" id="status-slider-30" name="status-slider-30" min="0" max="3" value="0" step="1" oninput="updateStatus('30')">
+                            <span id="status-label-30" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-30">投递时间:</label>
+                            <input type="date" id="applied-date-30" name="applied-date-30" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-30">笔试面试:</label>
+                            <input type="date" id="interview-date-30" name="interview-date-30" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-30">Offer时间:</label>
+                            <input type="date" id="offer-date-30" name="offer-date-30" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-30" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>31</td>
+                 <td>**E. 化工/多元化材料/设备公司**</td>
+                 <td>**万华化学** (民企/龙头) ★★★☆☆</td>
+                 <td>功能材料研发工程师(电池用高分子/添加剂)</td>
+                 <td>大型化工集团，拓展新材料；无机化学背景、电解液添加剂研究经验相关。(多模型提及)</td>
+                 <td>
+                    <div id="link-container-31" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-31" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-31" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('31')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-31">进度:</label>
+                            <input type="range" id="status-slider-31" name="status-slider-31" min="0" max="3" value="0" step="1" oninput="updateStatus('31')">
+                            <span id="status-label-31" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-31">投递时间:</label>
+                            <input type="date" id="applied-date-31" name="applied-date-31" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-31">笔试面试:</label>
+                            <input type="date" id="interview-date-31" name="interview-date-31" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-31">Offer时间:</label>
+                            <input type="date" id="offer-date-31" name="offer-date-31" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-31" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                <td>32</td>
+                <td>**E. 化工/多元化材料/设备公司**</td>
+                <td>**中化集团/中国化工(中化控股)** (央企) ★★★☆☆</td>
+                <td>新材料/新能源技术研发工程师</td>
+                <td>大型化工央企，可能在电池材料(溶剂/添加剂/原料)或下游应用有布局；国家项目经历是优势。(Gemini, 阶跃AI提及)</td>
+                 <td>
+                    <div id="link-container-32" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-32" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-32" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('32')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-32">进度:</label>
+                            <input type="range" id="status-slider-32" name="status-slider-32" min="0" max="3" value="0" step="1" oninput="updateStatus('32')">
+                            <span id="status-label-32" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-32">投递时间:</label>
+                            <input type="date" id="applied-date-32" name="applied-date-32" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-32">笔试面试:</label>
+                            <input type="date" id="interview-date-32" name="interview-date-32" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-32">Offer时间:</label>
+                            <input type="date" id="offer-date-32" name="offer-date-32" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-32" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                 <td>33</td>
+                 <td>**E. 化工/多元化材料/设备公司**</td>
+                 <td>**巴斯夫 BASF (中国)** (外企) ★★★☆☆</td>
+                 <td>电化学材料科学家</td>
+                 <td>国际化工巨头，在华有研发；电化学背景匹配。(Gemini, 腾讯元宝提及)</td>
+                 <td>
+                    <div id="link-container-33" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-33" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-33" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('33')">添加链接</button>
+                    </div>
+                </td>
+                  <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-33">进度:</label>
+                            <input type="range" id="status-slider-33" name="status-slider-33" min="0" max="3" value="0" step="1" oninput="updateStatus('33')">
+                            <span id="status-label-33" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-33">投递时间:</label>
+                            <input type="date" id="applied-date-33" name="applied-date-33" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-33">笔试面试:</label>
+                            <input type="date" id="interview-date-33" name="interview-date-33" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-33">Offer时间:</label>
+                            <input type="date" id="offer-date-33" name="offer-date-33" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-33" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>34</td>
+                 <td>**E. 化工/多元化材料/设备公司**</td>
+                 <td>**先导智能** (民企/龙头) ★★☆☆☆</td>
+                 <td>固态电池装备研发工程师</td>
+                 <td>电池设备龙头；电解液工艺优化经验可能有一定关联，但偏设备端。(腾讯元宝提及)</td>
+                 <td>
+                    <div id="link-container-34" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-34" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-34" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('34')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-34">进度:</label>
+                            <input type="range" id="status-slider-34" name="status-slider-34" min="0" max="3" value="0" step="1" oninput="updateStatus('34')">
+                            <span id="status-label-34" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-34">投递时间:</label>
+                            <input type="date" id="applied-date-34" name="applied-date-34" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-34">笔试面试:</label>
+                            <input type="date" id="interview-date-34" name="interview-date-34" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-34">Offer时间:</label>
+                            <input type="date" id="offer-date-34" name="offer-date-34" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-34" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td>**E. 化工/多元化材料/设备公司**</td>
+                <td>**京东方 BOE** (国企) ★★☆☆☆</td>
+                <td>新型显示材料研发(柔性电池方向)</td>
+                <td>锌电池可用于柔性电子，但与核心背景距离较远。(DeepSeek提及)</td>
+                 <td>
+                    <div id="link-container-35" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-35" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-35" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('35')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-35">进度:</label>
+                            <input type="range" id="status-slider-35" name="status-slider-35" min="0" max="3" value="0" step="1" oninput="updateStatus('35')">
+                            <span id="status-label-35" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-35">投递时间:</label>
+                            <input type="date" id="applied-date-35" name="applied-date-35" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-35">笔试面试:</label>
+                            <input type="date" id="interview-date-35" name="interview-date-35" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-35">Offer时间:</label>
+                            <input type="date" id="offer-date-35" name="offer-date-35" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-35" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                 <td>36</td>
+                 <td>**F. 能源/电网公司 (大型储能应用)**</td>
+                 <td>**国家电网 / 南方电网** (央企) ★★☆☆☆</td>
+                 <td>储能技术研究员、电力系统储能工程师、材料腐蚀与防护工程师</td>
+                 <td>关注大规模储能应用、集成、标准；与微观材料研究有距离，但储能方向一致；腐蚀课程和界面研究有一定相关性。(多模型提及)</td>
+                 <td>
+                    <div id="link-container-36" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-36" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-36" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('36')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-36">进度:</label>
+                            <input type="range" id="status-slider-36" name="status-slider-36" min="0" max="3" value="0" step="1" oninput="updateStatus('36')">
+                            <span id="status-label-36" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-36">投递时间:</label>
+                            <input type="date" id="applied-date-36" name="applied-date-36" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-36">笔试面试:</label>
+                            <input type="date" id="interview-date-36" name="interview-date-36" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-36">Offer时间:</label>
+                            <input type="date" id="offer-date-36" name="offer-date-36" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-36" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td>**F. 能源/电网公司 (大型储能应用)**</td>
+                <td>**国家能源集团 / 国家电投 / 华能** (央企) ★★☆☆☆</td>
+                <td>新能源/储能技术研发工程师(储能材料/系统应用/新型电池)</td>
+                <td>大型能源集团，关注发电/电网侧储能；项目经历和储能成果相关。(多模型提及)</td>
+                 <td>
+                    <div id="link-container-37" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-37" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-37" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('37')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-37">进度:</label>
+                            <input type="range" id="status-slider-37" name="status-slider-37" min="0" max="3" value="0" step="1" oninput="updateStatus('37')">
+                            <span id="status-label-37" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-37">投递时间:</label>
+                            <input type="date" id="applied-date-37" name="applied-date-37" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-37">笔试面试:</label>
+                            <input type="date" id="interview-date-37" name="interview-date-37" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-37">Offer时间:</label>
+                            <input type="date" id="offer-date-37" name="offer-date-37" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-37" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td>**F. 能源/电网公司 (大型储能应用)**</td>
+                <td>**中石化 / 中石油** (央企) ★★☆☆☆</td>
+                <td>新能源技术研究员(电池储能/材料方向)、材料合成/分析</td>
+                <td>向新能源转型，可能在电池材料(溶剂/添加剂)或储能领域有布局。(Gemini, DeepSeek, ChatGPT提及)</td>
+                 <td>
+                    <div id="link-container-38" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-38" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-38" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('38')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-38">进度:</label>
+                            <input type="range" id="status-slider-38" name="status-slider-38" min="0" max="3" value="0" step="1" oninput="updateStatus('38')">
+                            <span id="status-label-38" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-38">投递时间:</label>
+                            <input type="date" id="applied-date-38" name="applied-date-38" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-38">笔试面试:</label>
+                            <input type="date" id="interview-date-38" name="interview-date-38" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-38">Offer时间:</label>
+                            <input type="date" id="offer-date-38" name="offer-date-38" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-38" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td>**F. 能源/电网公司 (大型储能应用)**</td>
+                <td>**阳光电源** (民企) ★★★☆☆</td>
+                <td>储能电池研发工程师、系统集成工程师</td>
+                <td>储能系统集成商；锌基混合电容器寿命提升研究可迁移。(豆包提及)</td>
+                 <td>
+                    <div id="link-container-39" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-39" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-39" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('39')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-39">进度:</label>
+                            <input type="range" id="status-slider-39" name="status-slider-39" min="0" max="3" value="0" step="1" oninput="updateStatus('39')">
+                            <span id="status-label-39" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-39">投递时间:</label>
+                            <input type="date" id="applied-date-39" name="applied-date-39" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-39">笔试面试:</label>
+                            <input type="date" id="interview-date-39" name="interview-date-39" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-39">Offer时间:</label>
+                            <input type="date" id="offer-date-39" name="offer-date-39" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-39" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>40</td>
+                 <td>**G. 科研院所/高校**</td>
+                 <td>**中科院相关研究所** (物理所/化学所/宁波材料所/大连化物所/上海硅酸盐所等) ★★★★☆</td>
+                 <td>助理研究员、博士后、工程师、研究实习员</td>
+                 <td>科研实力强，平台好；您的顶刊文章、科研背景和国家项目经验是显著优势；适合继续深耕。(多模型高频推荐)</td>
+                 <td>
+                    <div id="link-container-40" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-40" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-40" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('40')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-40">进度:</label>
+                            <input type="range" id="status-slider-40" name="status-slider-40" min="0" max="3" value="0" step="1" oninput="updateStatus('40')">
+                            <span id="status-label-40" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-40">投递时间:</label>
+                            <input type="date" id="applied-date-40" name="applied-date-40" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-40">笔试面试:</label>
+                            <input type="date" id="interview-date-40" name="interview-date-40" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-40">Offer时间:</label>
+                            <input type="date" id="offer-date-40" name="offer-date-40" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-40" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td>**G. 科研院所/高校**</td>
+                <td>**南开大学/苏州大学/清华苏州研究院/湖大粤港澳大湾区研究院 等** ★★★★☆</td>
+                <td>科研助理、工程师、博士后、讲师、项目研究员</td>
+                <td>学术背景契合，可回母校或选择有优势的实验室；编书经历加分。(多模型提及)</td>
+                 <td>
+                    <div id="link-container-41" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-41" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-41" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('41')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-41">进度:</label>
+                            <input type="range" id="status-slider-41" name="status-slider-41" min="0" max="3" value="0" step="1" oninput="updateStatus('41')">
+                            <span id="status-label-41" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-41">投递时间:</label>
+                            <input type="date" id="applied-date-41" name="applied-date-41" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-41">笔试面试:</label>
+                            <input type="date" id="interview-date-41" name="interview-date-41" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-41">Offer时间:</label>
+                            <input type="date" id="offer-date-41" name="offer-date-41" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-41" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td>**G. 科研院所/高校**</td>
+                <td>**地方政府/企业支持的新型研发机构** ★★★☆☆</td>
+                <td>研究员、工程师</td>
+                <td>通常介于学术界和产业界之间，项目导向。(Gemini提及)</td>
+                 <td>
+                    <div id="link-container-42" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-42" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-42" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('42')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-42">进度:</label>
+                            <input type="range" id="status-slider-42" name="status-slider-42" min="0" max="3" value="0" step="1" oninput="updateStatus('42')">
+                            <span id="status-label-42" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-42">投递时间:</label>
+                            <input type="date" id="applied-date-42" name="applied-date-42" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-42">笔试面试:</label>
+                            <input type="date" id="interview-date-42" name="interview-date-42" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-42">Offer时间:</label>
+                            <input type="date" id="offer-date-42" name="offer-date-42" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-42" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>43</td>
+                 <td>**H. 交叉/数字化领域 (AI+材料等)**</td>
+                 <td>**华为数字能源** (民企) ★★☆☆☆</td>
+                 <td>储能电池技术专家、电池AI仿真、电化学建模</td>
+                 <td>AI赋能储能系统管理；若有计算模拟和数据分析基础可尝试，但与核心实验背景有距离。(ChatGPT, 腾讯元宝提及)</td>
+                 <td>
+                    <div id="link-container-43" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-43" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-43" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('43')">添加链接</button>
+                    </div>
+                </td>
+                  <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-43">进度:</label>
+                            <input type="range" id="status-slider-43" name="status-slider-43" min="0" max="3" value="0" step="1" oninput="updateStatus('43')">
+                            <span id="status-label-43" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-43">投递时间:</label>
+                            <input type="date" id="applied-date-43" name="applied-date-43" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-43">笔试面试:</label>
+                            <input type="date" id="interview-date-43" name="interview-date-43" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-43">Offer时间:</label>
+                            <input type="date" id="offer-date-43" name="offer-date-43" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-43" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>44</td>
+                 <td>**H. 交叉/数字化领域 (AI+材料等)**</td>
+                 <td>**阿里达摩院 / 腾讯科恩实验室 / 中科驭数 / 澜舟科技** ★★☆☆☆</td>
+                 <td>材料预测/数据建模工程师、实验科学家助理</td>
+                 <td>AI+材料前沿方向；需要较强计算/编程背景。(ChatGPT提及)</td>
+                 <td>
+                    <div id="link-container-44" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-44" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-44" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('44')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-44">进度:</label>
+                            <input type="range" id="status-slider-44" name="status-slider-44" min="0" max="3" value="0" step="1" oninput="updateStatus('44')">
+                            <span id="status-label-44" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-44">投递时间:</label>
+                            <input type="date" id="applied-date-44" name="applied-date-44" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-44">笔试面试:</label>
+                            <input type="date" id="interview-date-44" name="interview-date-44" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-44">Offer时间:</label>
+                            <input type="date" id="offer-date-44" name="offer-date-44" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-44" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+             <tr>
+                 <td>45</td>
+                 <td>**H. 交叉/数字化领域 (AI+材料等)**</td>
+                 <td>**大疆创新 DJI** (民企) ★★☆☆☆</td>
+                 <td>智能电池系统算法、电化学测试</td>
+                 <td>无人机电池系统；电化学测试技能相关，但偏算法和系统。(ChatGPT提及)</td>
+                 <td>
+                    <div id="link-container-45" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-45" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-45" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('45')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-45">进度:</label>
+                            <input type="range" id="status-slider-45" name="status-slider-45" min="0" max="3" value="0" step="1" oninput="updateStatus('45')">
+                            <span id="status-label-45" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-45">投递时间:</label>
+                            <input type="date" id="applied-date-45" name="applied-date-45" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-45">笔试面试:</label>
+                            <input type="date" id="interview-date-45" name="interview-date-45" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-45">Offer时间:</label>
+                            <input type="date" id="offer-date-45" name="offer-date-45" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-45" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td>**H. 交叉/数字化领域 (AI+材料等)**</td>
+                <td>**华为/OPPO (材料实验室)** ★★☆☆☆</td>
+                <td>电池材料研究员(消费电子储能方向)</td>
+                <td>消费电子电池需求；研究背景有一定关联。(DeepSeek提及)</td>
+                 <td>
+                    <div id="link-container-46" class="link-container"></div>
+                    <div class="url-input-section">
+                        <input type="url" id="url-input-46" placeholder="输入网址 (如 https://...)">
+                        <input type="text" id="text-input-46" placeholder="链接文本 (可选)">
+                        <button onclick="addLink('46')">添加链接</button>
+                    </div>
+                </td>
+                 <td>
+                     <div class="status-container">
+                        <div class="slider-group">
+                            <label for="status-slider-46">进度:</label>
+                            <input type="range" id="status-slider-46" name="status-slider-46" min="0" max="3" value="0" step="1" oninput="updateStatus('46')">
+                            <span id="status-label-46" class="status-label">未投递</span>
+                        </div>
+                        <div class="date-group">
+                            <label for="applied-date-46">投递时间:</label>
+                            <input type="date" id="applied-date-46" name="applied-date-46" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="interview-date-46">笔试面试:</label>
+                            <input type="date" id="interview-date-46" name="interview-date-46" disabled>
+                        </div>
+                        <div class="date-group">
+                            <label for="offer-date-46">Offer时间:</label>
+                            <input type="date" id="offer-date-46" name="offer-date-46" disabled>
+                        </div>
+                    </div>
+                </td>
+                <td><textarea id="notes-46" class="notes-textarea" placeholder="在此添加备注信息..."></textarea></td>
+            </tr>
+            </tbody>
+    </table>
+</div>
+
+<script>
+    const statusMap = {
+        0: "未投递",
+        1: "已投递",
+        2: "笔试面试",
+        3: "Offer"
+    };
+
+    function updateStatus(index) {
+        const slider = document.getElementById(`status-slider-${index}`);
+        const label = document.getElementById(`status-label-${index}`);
+        const appliedDateInput = document.getElementById(`applied-date-${index}`);
+        const interviewDateInput = document.getElementById(`interview-date-${index}`);
+        const offerDateInput = document.getElementById(`offer-date-${index}`);
+
+        // Ensure elements exist before proceeding
+        if (!slider || !label || !appliedDateInput || !interviewDateInput || !offerDateInput) {
+            // console.error(`Status elements not found for index ${index}`); // Optional: uncomment for debugging
+            return;
+        }
+
+        const value = parseInt(slider.value);
+
+        // Update status label text and color
+        label.textContent = statusMap[value];
+        label.style.color = value === 3 ? 'green' : (value === 2 ? '#E67E22' : (value === 1 ? '#3498DB' : 'grey')); // Offer: green, Interview: orange, Applied: blue, Not Applied: grey
+
+        // Enable/disable date inputs based on status
+        appliedDateInput.disabled = (value < 1);
+        interviewDateInput.disabled = (value < 2);
+        offerDateInput.disabled = (value < 3);
+
+        // Optional: Clear dates if slider goes backward
+        if (value < 3) offerDateInput.value = '';
+        if (value < 2) interviewDateInput.value = '';
+        if (value < 1) appliedDateInput.value = '';
+    }
+
+    function addLink(index) {
+        const urlInput = document.getElementById(`url-input-${index}`);
+        const textInput = document.getElementById(`text-input-${index}`);
+        const linkContainer = document.getElementById(`link-container-${index}`);
+
+        // Ensure elements exist
+        if (!urlInput || !textInput || !linkContainer) {
+             console.error(`Link input elements not found for index ${index}`);
+             return;
+        }
+
+        const url = urlInput.value.trim();
+        let linkText = textInput.value.trim();
+
+        if (!url) {
+            alert("请输入网址！");
+            return;
+        }
+
+        // Basic check if URL seems valid and prepend protocol if missing
+        let correctedUrl = url;
+        if (!url.match(/^https?:\/\//i) && !url.startsWith('//')) {
+             correctedUrl = 'https://' + url;
+        }
+
+
+        if (!linkText) {
+            // Use a shortened version of the URL as default text if text is empty
+            try {
+                const urlObj = new URL(correctedUrl);
+                linkText = urlObj.hostname.replace(/^www\./, ''); // Remove www.
+                 if (linkText.length > 30) { // Further shorten if hostname is too long
+                     linkText = linkText.substring(0, 27) + '...';
+                 }
+            } catch (e) {
+                // If URL parsing fails, use the raw URL (might be invalid)
+                 linkText = url.length > 30 ? url.substring(0, 27) + '...' : url;
+            }
+        }
+
+        // Generate a unique ID for this link item
+        const linkItemId = `link-item-${index}-${Date.now()}`;
+
+        // Create the container for the link and its buttons
+        const linkItemDiv = document.createElement('div');
+        linkItemDiv.className = 'link-item';
+        linkItemDiv.id = linkItemId;
+
+        // Create the link element itself
+        const linkElement = document.createElement('a');
+        linkElement.href = correctedUrl;
+        linkElement.textContent = linkText;
+        linkElement.target = '_blank';
+        linkElement.title = correctedUrl; // Show full URL on hover
+
+        // Create span to hold link (allows buttons to align right)
+        const linkSpan = document.createElement('span');
+        linkSpan.appendChild(linkElement);
+
+        // Create div for buttons
+        const buttonDiv = document.createElement('div');
+
+        // Create the Edit button
+        const editButton = document.createElement('button');
+        editButton.textContent = '编辑';
+        // Use template literals and escape quotes carefully for onclick arguments
+        editButton.onclick = function() {
+             editLink(linkItemId, correctedUrl, linkText, index);
+        };
+
+        // Create the Delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '删除';
+        deleteButton.onclick = function() {
+             deleteLink(linkItemId);
+        };
+
+        // Append elements
+        buttonDiv.appendChild(editButton);
+        buttonDiv.appendChild(deleteButton);
+        linkItemDiv.appendChild(linkSpan); // Add link span first
+        linkItemDiv.appendChild(buttonDiv); // Add button div after
+
+        linkContainer.appendChild(linkItemDiv);
+
+        // Clear the input fields
+        urlInput.value = '';
+        textInput.value = '';
+    }
+
+    function deleteLink(linkItemId) {
+         const linkItem = document.getElementById(linkItemId);
+         if (linkItem && confirm(`确定要删除这个链接吗？\n${linkItem.querySelector('a').textContent}`)) {
+             linkItem.remove();
+         }
+    }
+
+     function editLink(linkItemId, currentUrl, currentText, rowIndex) {
+         const urlInput = document.getElementById(`url-input-${rowIndex}`);
+         const textInput = document.getElementById(`text-input-${rowIndex}`);
+
+         if (!urlInput || !textInput) return;
+
+         // Populate the main input fields with the link's data
+         urlInput.value = currentUrl;
+         textInput.value = currentText;
+
+         // Optional: Focus the URL input for immediate editing
+         urlInput.focus();
+
+         // Remove the old link item from the display
+         // The user will click "添加链接" again after modification
+         const linkItem = document.getElementById(linkItemId);
+         if (linkItem) {
+             linkItem.remove();
+         }
+     }
+
+
+    // Initialize all statuses on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            const sliders = document.querySelectorAll('input[type="range"][id^="status-slider-"]');
+            sliders.forEach(slider => {
+                const index = slider.id.split('-').pop();
+                // Check if updateStatus function exists before calling
+                if (typeof updateStatus === 'function') {
+                    updateStatus(index);
+                } else {
+                     console.error('updateStatus function not defined when trying to initialize');
+                }
+            });
+        }, 0);
+    });
+</script>
+
+</body>
+</html>
