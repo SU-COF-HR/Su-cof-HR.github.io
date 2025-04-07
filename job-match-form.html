@@ -1928,6 +1928,7 @@
         3: "Offer"
     };
 
+    // 更新投递状态并保存到Local Storage
     function updateStatus(index) {
         const slider = document.getElementById(`status-slider-${index}`);
         const label = document.getElementById(`status-label-${index}`);
@@ -1935,38 +1936,57 @@
         const interviewDateInput = document.getElementById(`interview-date-${index}`);
         const offerDateInput = document.getElementById(`offer-date-${index}`);
 
-        // Ensure elements exist before proceeding
         if (!slider || !label || !appliedDateInput || !interviewDateInput || !offerDateInput) {
-            // console.error(`Status elements not found for index ${index}`); // Optional: uncomment for debugging
             return;
         }
 
         const value = parseInt(slider.value);
 
-        // Update status label text and color
         label.textContent = statusMap[value];
-        label.style.color = value === 3 ? 'green' : (value === 2 ? '#E67E22' : (value === 1 ? '#3498DB' : 'grey')); // Offer: green, Interview: orange, Applied: blue, Not Applied: grey
+        label.style.color = value === 3 ? 'green' : (value === 2 ? '#E67E22' : (value === 1 ? '#3498DB' : 'grey'));
 
-        // Enable/disable date inputs based on status
         appliedDateInput.disabled = (value < 1);
         interviewDateInput.disabled = (value < 2);
         offerDateInput.disabled = (value < 3);
 
-        // Optional: Clear dates if slider goes backward
         if (value < 3) offerDateInput.value = '';
         if (value < 2) interviewDateInput.value = '';
         if (value < 1) appliedDateInput.value = '';
+
+        // 保存投递状态到Local Storage
+        localStorage.setItem(`status-${index}`, value);
     }
 
+    // 通用的保存数据函数
+    function saveData(key, value) {
+        localStorage.setItem(key, value);
+    }
+
+    // 保存当前行的所有链接到Local Storage
+    function saveLinks(index) {
+        const linkContainer = document.getElementById(`link-container-${index}`);
+        if (!linkContainer) return;
+
+        const links = [];
+        const linkItems = linkContainer.querySelectorAll('.link-item');
+        linkItems.forEach(item => {
+            const a = item.querySelector('a');
+            if (a) {
+                links.push({ url: a.href, text: a.textContent });
+            }
+        });
+
+        localStorage.setItem(`links-${index}`, JSON.stringify(links));
+    }
+
+    // 添加链接并保存
     function addLink(index) {
         const urlInput = document.getElementById(`url-input-${index}`);
         const textInput = document.getElementById(`text-input-${index}`);
         const linkContainer = document.getElementById(`link-container-${index}`);
 
-        // Ensure elements exist
         if (!urlInput || !textInput || !linkContainer) {
-             console.error(`Link input elements not found for index ${index}`);
-             return;
+            return;
         }
 
         const url = urlInput.value.trim();
@@ -1977,120 +1997,208 @@
             return;
         }
 
-        // Basic check if URL seems valid and prepend protocol if missing
         let correctedUrl = url;
         if (!url.match(/^https?:\/\//i) && !url.startsWith('//')) {
-             correctedUrl = 'https://' + url;
+            correctedUrl = 'https://' + url;
         }
 
-
         if (!linkText) {
-            // Use a shortened version of the URL as default text if text is empty
             try {
                 const urlObj = new URL(correctedUrl);
-                linkText = urlObj.hostname.replace(/^www\./, ''); // Remove www.
-                 if (linkText.length > 30) { // Further shorten if hostname is too long
-                     linkText = linkText.substring(0, 27) + '...';
-                 }
+                linkText = urlObj.hostname.replace(/^www\./, '');
+                if (linkText.length > 30) {
+                    linkText = linkText.substring(0, 27) + '...';
+                }
             } catch (e) {
-                // If URL parsing fails, use the raw URL (might be invalid)
-                 linkText = url.length > 30 ? url.substring(0, 27) + '...' : url;
+                linkText = url.length > 30 ? url.substring(0, 27) + '...' : url;
             }
         }
 
-        // Generate a unique ID for this link item
         const linkItemId = `link-item-${index}-${Date.now()}`;
 
-        // Create the container for the link and its buttons
         const linkItemDiv = document.createElement('div');
         linkItemDiv.className = 'link-item';
         linkItemDiv.id = linkItemId;
 
-        // Create the link element itself
         const linkElement = document.createElement('a');
         linkElement.href = correctedUrl;
         linkElement.textContent = linkText;
         linkElement.target = '_blank';
-        linkElement.title = correctedUrl; // Show full URL on hover
+        linkElement.title = correctedUrl;
 
-        // Create span to hold link (allows buttons to align right)
         const linkSpan = document.createElement('span');
         linkSpan.appendChild(linkElement);
 
-        // Create div for buttons
         const buttonDiv = document.createElement('div');
 
-        // Create the Edit button
         const editButton = document.createElement('button');
         editButton.textContent = '编辑';
-        // Use template literals and escape quotes carefully for onclick arguments
         editButton.onclick = function() {
-             editLink(linkItemId, correctedUrl, linkText, index);
+            editLink(linkItemId, correctedUrl, linkText, index);
         };
 
-        // Create the Delete button
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '删除';
         deleteButton.onclick = function() {
-             deleteLink(linkItemId);
+            deleteLink(linkItemId, index);
         };
 
-        // Append elements
         buttonDiv.appendChild(editButton);
         buttonDiv.appendChild(deleteButton);
-        linkItemDiv.appendChild(linkSpan); // Add link span first
-        linkItemDiv.appendChild(buttonDiv); // Add button div after
+        linkItemDiv.appendChild(linkSpan);
+        linkItemDiv.appendChild(buttonDiv);
 
         linkContainer.appendChild(linkItemDiv);
 
-        // Clear the input fields
         urlInput.value = '';
         textInput.value = '';
+
+        // 保存链接到Local Storage
+        saveLinks(index);
     }
 
-    function deleteLink(linkItemId) {
-         const linkItem = document.getElementById(linkItemId);
-         if (linkItem && confirm(`确定要删除这个链接吗？\n${linkItem.querySelector('a').textContent}`)) {
-             linkItem.remove();
-         }
+    // 删除链接并更新Local Storage
+    function deleteLink(linkItemId, index) {
+        const linkItem = document.getElementById(linkItemId);
+        if (linkItem && confirm(`确定要删除这个链接吗？\n${linkItem.querySelector('a').textContent}`)) {
+            linkItem.remove();
+            saveLinks(index);
+        }
     }
 
-     function editLink(linkItemId, currentUrl, currentText, rowIndex) {
-         const urlInput = document.getElementById(`url-input-${rowIndex}`);
-         const textInput = document.getElementById(`text-input-${rowIndex}`);
+    // 编辑链接
+    function editLink(linkItemId, currentUrl, currentText, rowIndex) {
+        const urlInput = document.getElementById(`url-input-${rowIndex}`);
+        const textInput = document.getElementById(`text-input-${rowIndex}`);
 
-         if (!urlInput || !textInput) return;
+        if (!urlInput || !textInput) return;
 
-         // Populate the main input fields with the link's data
-         urlInput.value = currentUrl;
-         textInput.value = currentText;
+        urlInput.value = currentUrl;
+        textInput.value = currentText;
 
-         // Optional: Focus the URL input for immediate editing
-         urlInput.focus();
+        urlInput.focus();
 
-         // Remove the old link item from the display
-         // The user will click "添加链接" again after modification
-         const linkItem = document.getElementById(linkItemId);
-         if (linkItem) {
-             linkItem.remove();
-         }
-     }
+        const linkItem = document.getElementById(linkItemId);
+        if (linkItem) {
+            linkItem.remove();
+        }
+    }
 
-
-    // Initialize all statuses on page load
+    // 页面加载时初始化状态并绑定事件
     document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            const sliders = document.querySelectorAll('input[type="range"][id^="status-slider-"]');
-            sliders.forEach(slider => {
-                const index = slider.id.split('-').pop();
-                // Check if updateStatus function exists before calling
-                if (typeof updateStatus === 'function') {
+        const rowCount = 46; // 你的表格有46行
+
+        // 加载数据并初始化
+        for (let index = 1; index <= rowCount; index++) {
+            // 加载投递状态
+            const status = localStorage.getItem(`status-${index}`);
+            if (status !== null) {
+                const slider = document.getElementById(`status-slider-${index}`);
+                if (slider) {
+                    slider.value = status;
                     updateStatus(index);
-                } else {
-                     console.error('updateStatus function not defined when trying to initialize');
                 }
-            });
-        }, 0);
+            }
+
+            // 加载日期
+            const appliedDate = localStorage.getItem(`applied-date-${index}`);
+            if (appliedDate) {
+                const appliedDateInput = document.getElementById(`applied-date-${index}`);
+                if (appliedDateInput) appliedDateInput.value = appliedDate;
+            }
+            const interviewDate = localStorage.getItem(`interview-date-${index}`);
+            if (interviewDate) {
+                const interviewDateInput = document.getElementById(`interview-date-${index}`);
+                if (interviewDateInput) interviewDateInput.value = interviewDate;
+            }
+            const offerDate = localStorage.getItem(`offer-date-${index}`);
+            if (offerDate) {
+                const offerDateInput = document.getElementById(`offer-date-${index}`);
+                if (offerDateInput) offerDateInput.value = offerDate;
+            }
+
+            // 加载备注
+            const notes = localStorage.getItem(`notes-${index}`);
+            if (notes) {
+                const notesTextarea = document.getElementById(`notes-${index}`);
+                if (notesTextarea) notesTextarea.value = notes;
+            }
+
+            // 加载链接
+            const linksJson = localStorage.getItem(`links-${index}`);
+            if (linksJson) {
+                const links = JSON.parse(linksJson);
+                const linkContainer = document.getElementById(`link-container-${index}`);
+                if (linkContainer) {
+                    links.forEach((link, linkIndex) => {
+                        const linkItemId = `link-item-${index}-${Date.now()}-${linkIndex}`;
+                        const linkItemDiv = document.createElement('div');
+                        linkItemDiv.className = 'link-item';
+                        linkItemDiv.id = linkItemId;
+
+                        const linkElement = document.createElement('a');
+                        linkElement.href = link.url;
+                        linkElement.textContent = link.text;
+                        linkElement.target = '_blank';
+                        linkElement.title = link.url;
+
+                        const linkSpan = document.createElement('span');
+                        linkSpan.appendChild(linkElement);
+
+                        const buttonDiv = document.createElement('div');
+
+                        const editButton = document.createElement('button');
+                        editButton.textContent = '编辑';
+                        editButton.onclick = function() {
+                            editLink(linkItemId, link.url, link.text, index);
+                        };
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = '删除';
+                        deleteButton.onclick = function() {
+                            deleteLink(linkItemId, index);
+                        };
+
+                        buttonDiv.appendChild(editButton);
+                        buttonDiv.appendChild(deleteButton);
+                        linkItemDiv.appendChild(linkSpan);
+                        linkItemDiv.appendChild(buttonDiv);
+
+                        linkContainer.appendChild(linkItemDiv);
+                    });
+                }
+            }
+
+            // 为日期和备注添加事件监听器
+            const appliedDateInput = document.getElementById(`applied-date-${index}`);
+            const interviewDateInput = document.getElementById(`interview-date-${index}`);
+            const offerDateInput = document.getElementById(`offer-date-${index}`);
+            const notesTextarea = document.getElementById(`notes-${index}`);
+
+            if (appliedDateInput) {
+                appliedDateInput.addEventListener('change', () => {
+                    saveData(`applied-date-${index}`, appliedDateInput.value);
+                });
+            }
+            if (interviewDateInput) {
+                interviewDateInput.addEventListener('change', () => {
+                    saveData(`interview-date-${index}`, interviewDateInput.value);
+                });
+            }
+            if (offerDateInput) {
+                offerDateInput.addEventListener('change', () => {
+                    saveData(`offer-date-${index}`, offerDateInput.value);
+                });
+            }
+            if (notesTextarea) {
+                notesTextarea.addEventListener('input', () => {
+                    clearTimeout(notesTextarea.saveTimeout);
+                    notesTextarea.saveTimeout = setTimeout(() => {
+                        saveData(`notes-${index}`, notesTextarea.value);
+                    }, 1000); // 1秒后保存
+                });
+            }
+        }
     });
 </script>
 
