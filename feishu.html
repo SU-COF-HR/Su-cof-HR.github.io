@@ -13,12 +13,51 @@
             --accent: #6690FF;
         }
         
-        .feishu-card {
-            border-left: 4px solid var(--primary);
+        /* 保持与index.html一致的卡片样式 */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
         
-        .feishu-card h2::before {
-            content: '📄'; /* 文档图标 */
+        .nav-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            border-left: 4px solid var(--primary); /* 飞书特色边框 */
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
+        }
+        
+        .nav-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .nav-card h2 {
+            color: var(--secondary);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-card p {
+            color: var(--gray);
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+        
+        /* 飞书特色图标 */
+        .nav-card h2::before {
+            content: '📄';
             margin-right: 0.5rem;
         }
     </style>
@@ -34,24 +73,24 @@
         
         <div class="nav-grid">
             <!-- 飞书文档卡片1 -->
-            <div class="nav-card feishu-card">
+            <div class="nav-card">
                 <a href="https://pcngmw8oh8lc.feishu.cn/base/CkAtbDC4HaLP0ysKHcacETygnQd?from=from_copylink" target="_blank">
-                    <h2>飞书文档1</h2>
-                    <p>基础文档模板库</p>
+                    <h2>基础文档模板库</h2>
+                    <p>包含各类常用文档模板和规范</p>
                 </a>
             </div>
             
             <!-- 飞书文档卡片2 -->
-            <div class="nav-card feishu-card">
+            <div class="nav-card">
                 <a href="https://pcngmw8oh8lc.feishu.cn/wiki/GazTwzFjyiXmdekiSAycTc6Vnpg?from=from_copylink" target="_blank">
-                    <h2>飞书文档2</h2>
-                    <p>团队知识库</p>
+                    <h2>团队知识库</h2>
+                    <p>团队共享的知识库和文档中心</p>
                 </a>
             </div>
             
             <!-- 添加新文档的模板 -->
             <!-- 
-            <div class="nav-card feishu-card">
+            <div class="nav-card">
                 <a href="新文档URL" target="_blank">
                     <h2>文档标题</h2>
                     <p>文档描述</p>
