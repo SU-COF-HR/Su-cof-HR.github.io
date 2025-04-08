@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞书文档导航 | SucofHR的资源站</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 继承主站样式并添加飞书特色 */
+        :root {
+            --primary: #3370FF; /* 飞书品牌蓝色 */
+            --secondary: #1D4ED8;
+            --accent: #6690FF;
+        }
+        
+        .feishu-card {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .feishu-card h2::before {
+            content: '📄'; /* 文档图标 */
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← 返回首页</a>
+        
+        <header>
+            <h1>飞书文档导航</h1>
+            <p class="subtitle">点击下方卡片快速访问常用飞书文档</p>
+        </header>
+        
+        <div class="nav-grid">
+            <!-- 飞书文档卡片1 -->
+            <div class="nav-card feishu-card">
+                <a href="https://pcngmw8oh8lc.feishu.cn/base/CkAtbDC4HaLP0ysKHcacETygnQd?from=from_copylink" target="_blank">
+                    <h2>飞书文档1</h2>
+                    <p>基础文档模板库</p>
+                </a>
+            </div>
+            
+            <!-- 飞书文档卡片2 -->
+            <div class="nav-card feishu-card">
+                <a href="https://pcngmw8oh8lc.feishu.cn/wiki/GazTwzFjyiXmdekiSAycTc6Vnpg?from=from_copylink" target="_blank">
+                    <h2>飞书文档2</h2>
+                    <p>团队知识库</p>
+                </a>
+            </div>
+            
+            <!-- 添加新文档的模板 -->
+            <!-- 
+            <div class="nav-card feishu-card">
+                <a href="新文档URL" target="_blank">
+                    <h2>文档标题</h2>
+                    <p>文档描述</p>
+                </a>
+            </div>
+            -->
+        </div>
+        
+        <footer>
+            <p>© 2025 SucofHR的GitHub Pages | 由GitHub托管</p>
+            <p>最后更新: 2025年4月</p>
+        </footer>
+    </div>
+</body>
+</html>
