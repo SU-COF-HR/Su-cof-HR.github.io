@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司信息查询工具表格 | 求职调研指南</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --glass: rgba(255, 255, 255, 0.15);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            --border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: : 0 auto;;
+            padding: 0 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .category {
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .category.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: var(--border);
+        }
+
+        .info-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .info-section ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-section li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .info-section li::before {
+            content: '•';
+            color: var(--accent);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            table-layout: fixed; /* 新增固定表格布局 */
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: top; /* 确保内容顶部对齐 */
+        }
+
+        /* 调整列宽和文本不换行 */
+        th:nth-child(1), td:nth-child(1) {
+            width: 15%;
+            white-space: nowrap; /* 禁止换行 */
+        }
+
+        th:nth-child(2), td:nth-child(2) {
+            width: 30%;
+        }
+
+        th:nth-child(3), td:nth-child(3) {
+            width: 55%;
+        }
+
+        th {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .tool-link {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+            margin-bottom: 0.3rem;
+        }
+
+        .tool-link:hover {
+            color: var(--accent);
+            text-decoration: underline;
+            transform: translateX(3px);
+        }
+
+        .priority-tip {
+            background: linear-gradient(to right, rgba(76, 201, 240, 0.1), rgba(72, 149, 239, 0.1));
+            color: var(--dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 3rem;
+            font-weight: 500;
+            border-left: 4px solid var(--success);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .priority-tip::before {
+            content: '💡';
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            opacity: 0.2;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            /* 移动端调整列宽 */
+            th:nth-child(1), td:nth-child(1) {
+                width: 25%;
+            }
+            
+            th:nth-child(2), td:nth-child(2) {
+                width: 35%;
+            }
+            
+            th:nth-child(3), td:nth-child(3) {
+                width: 40%;
+            }
+            
+            .priority-tip::before {
+                display: none;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll animation */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← 返回首页</a>
+        
+        <header>
+            <h1>公司信息查询工具表格</h1>
+            <p class="subtitle">全面调研方法及求职流程指南，助您做出明智的职业选择</p>
+        </header>
+        
+        <div class="category animate-on-scroll" id="company-info">
+            <div class="info-section">
+                <h3>公司信息获取层面</h3>
+                <ul>
+                    <li><strong>公司背景与历史</strong>：包括成立时间、发展历程、主营业务及核心技术。</li>
+                    <li><strong>企业文化与管理风格</strong>：如何看待员工成长、企业价值观、工作氛围。</li>
+                    <li><strong>发展前景与行业地位</strong>：公司的市场份额、竞争优势、未来规划、投资与技术研发投入。</li>
+                    <li><strong>员工待遇与福利</strong>：薪资体系、晋升通道、培训机会、福利待遇（五险一金、带薪休假、绩效奖金、股票期权等）、工作稳定性与企业规模。</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="research-method">
+            <div class="info-section">
+                <h3>四步调研法</h3>
+                <ul>
+                    <li><strong>基础筛查</strong>：通过国家企业信用信息公示系统和天眼查确认企业合法性，排除"黑名单"公司。</li>
+                    <li><strong>招聘匹配</strong>：在BOSS直聘/智联招聘筛选岗位，使用LinkedIn薪资计算器评估薪资合理性。</li>
+                    <li><strong>深度评估</strong>：通过脉脉、看准网、校友网络收集员工评价，交叉验证企业文化和稳定性。</li>
+                    <li><strong>风险决策</strong>：结合行业报告、财报数据和劳动仲裁记录，综合判断是否投递或接受offer。</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="category animate-on-scroll" id="tools-table">
+            <h2>信息查询工具推荐</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>信息维度</th>
+                        <th>推荐工具</th>
+                        <th>作用</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>企业合法性</td>
+                        <td>
+                            <a href="https://www.gsxt.gov.cn/" class="tool-link" target="_blank">国家企业信用信息公示系统</a><br>
+                            <a href="https://www.tianyancha.com/" class="tool-link" target="_blank">天眼查</a><br>
+                            <a href="https://www.qixin.com/" class="tool-link" target="_blank">启信宝</a><br>
+                            <a href="https://www.qichacha.com/" class="tool-link" target="_blank">企查查</a>
+                        </td>
+                        <td>验证企业注册信息，查询企业发展历程、财务状况、法律诉讼等，综合判断企业经营稳定性与合规性。</td>
+                    </tr>
+                    <tr>
+                        <td>招聘真实性</td>
+                        <td>
+                            <a href="https://www.zhaopin.com/" class="tool-link" target="_blank">智联招聘</a><br>
+                            <a href="https://www.51job.com/" class="tool-link" target="_blank">前程无忧</a><br>
+                            <a href="https://www.liepin.com/" class="tool-link" target="_blank">猎聘</a><br>
+                            <a href="https://www.zhipin.com/" class="tool-link" target="_blank">Boss直聘</a>
+                        </td>
+                        <td>智联招聘、前程无忧、猎聘可获取招聘信息、岗位需求、薪资水平等基础内容；Boss直聘支持直接与招聘负责人沟通，获取最新企业需求和内部真实信息。</td>
+                    </tr>
+                    <tr>
+                        <td>企业文化</td>
+                        <td>
+                            <a href=="https://maimai.cn/" class=="tool-link" target=="_blank">脉脉脉脉</a><br>
+                            <a href="https://www.zhihu.com/" class="tool-link" target="_blank">知乎</a><br>
+                            <a href="https://www.douban.com/" class="tool-link" target="_blank">豆瓣</a><br>
+                            <a href="https://www.glassdoor.com/index.htm" class="tool-link" target="_blank">Glassdoor</a>
+                        </td>
+                        <td>通过员工匿名评价了解企业文化氛围、工作环境、面试体验等；Glassdoor对外企的全球评价、薪资水平、面试问题分析有独特参考价值。</td>
+                    </tr>
+                    <tr>
+                        <td>行业前景</td>
+                        <td>
+                            <a href="https://www.51baogao.cn/" class="tool-link" target="_blank">51行业报告网</a><br>
+                            <a href="https://xueqiu.com/" class="tool-link" target="_blank">雪球</a>
+                        </td>
+                        <td>51行业报告网提供行业分析报告，雪球可查看企业财报及投资者讨论，用于评估企业所处行业趋势与发展潜力。</td>
+                    </tr>
+                    <tr>
+                        <td>稳定性</td>
+                        <td>
+                            <a href="http://tiaojie.12333.gov.cn/portal/" class="tool-link" target="_blank">全国劳动人事争议在线调解服务平台</a><br>
+                            <a href="https://www.tianyancha.com/" class="tool-link" target="_blank">天眼查</a>
+                        </td>
+                        <td>查询企业劳动仲裁记录、经营异常信息等，辅助判断企业运营风险与稳定性。</td>
+                    </tr>
+                    <tr>
+                        <<<tdtd>>员工发展员工发展</</tdtd>>
+                        <<<<tdtd<<<tdtd>>>>
+                            <<<<aa<<<aa hrefhrefhrefhref=="#""#" class=="tool-link">企业官网企业官网</=="#""#" class=="tool-link">企业官网企业官网</</</aaaa>>>><<<<brbr<<<brbr>>>>
+                            <<<<aa<<<aa hrefhrefhrefhref===="https://www.linkedin.com/""https://www.linkedin.com/" class=="tool-link" target=="_blank">LinkedInLinkedIn</"https://www.linkedin.com/" class=="tool-link" target=="_blank">LinkedInLinkedIn</</</aaaa>>>>
+                        </</                        </</</</tdtdtdtdtdtdtdtd>>>>
+                        <<<<tdtd<<<tdtd>>>企业官网可了解培训体系、晋升机制等官方信息；LinkedIn用于建立职业网络，关注企业动态及招聘负责人，洞察内部晋升路径。企业官网可了解培训体系、晋升机制等官方信息；LinkedIn用于建立职业网络，关注企业动态及招聘负责人，洞察内部晋升路径。</>企业官网可了解培训体系、晋升机制等官方信息；LinkedIn用于建立职业网络，关注企业动态及招聘负责人，洞察内部晋升路径。企业官网可了解培训体系、晋升机制等官方信息；LinkedIn用于建立职业网络，关注企业动态及招聘负责人，洞察内部晋升路径。</</</tdtdtdtd>>>>
+                    </tr>                    </tr>
+                </tbody>                </tbody>
+            </table>            </table>
+        </div>        </div>
+        
+        <<<<divdiv<<<divdiv classclassclassclass===="priority-tip animate-on-scroll""priority-tip animate-on-scroll">"priority-tip animate-on-scroll">
+            建议求职者按照"四步调研法"系统性地收集和分析公司信息，重点关注企业合法性和稳定性，同时结合行业前景和员工发展机会做出综合判断。使用推荐工具可大幅提高信息收集效率。            建议求职者按照"四步调研法"系统性地收集和分析公司信息，重点关注企业合法性和稳定性，同时结合行业前景和员工发展机会做出综合判断。使用推荐工具可大幅提高信息收集效率。            建议求职者按照"四步调研法"系统性地收集和分析公司信息，重点关注企业合法性和稳定性，同时结合行业前景和员工发展机会做出综合判断。使用推荐工具可大幅提高信息收集效率。            建议求职者按照"四步调研法"系统性地收集和分析公司信息，重点关注企业合法性和稳定性，同时结合行业前景和员工发展机会做出综合判断。使用推荐工具可大幅提高信息收集效率。
+        </div>        </div>
+        
+        <<<<footerfooter<<<footerfooter>>>>
+            <<<<pp<<<pp>>>更新日期：2025年4月更新日期：2025年4月</>更新日期：2025年4月更新日期：2025年4月</</</pppp>>>>
+            <<<<pp<<<pp>>>© 2025 SucofHR的GitHub Pages | 由GitHub托管© 2025 SucofHR的GitHub Pages | 由GitHub托管</>© 2025 SucofHR的GitHub Pages | 由GitHub托管© 2025 SucofHR的GitHub Pages | 由GitHub托管</</</pppp>>>>
+        </</        </</</</footerfooterfooterfooterfooterfooterfooterfooter>>>>
+    </div>    </div>
+
+    <<<<scriptscript<<<scriptscript>>>>
+        // Scroll animation        // Scroll animation        // Scroll animation        // Scroll animation
+        document.addEventListener('DOMContentLoaded', () => {        document.addEventListener('DOMContentLoaded', () => {        document.addEventListener('DOMContentLoaded', () => {        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions =  = {            const observerOptions =  = {            const observerOptions =  = {            const observerOptions =  = {
+                threshold: : 0.1                threshold: : 0.1                threshold: : 0.1                threshold: : 0.1
+            };;            };;            };;            };;
+            
+            const observer =  = new IntersectionObserver((entries) =>  => {            const observer =  = new IntersectionObserver((entries) =>  => {            const observer =  = new IntersectionObserver((entries) =>  => {            const observer =  = new IntersectionObserver((entries) =>  => {
+                entries..forEach(entry =>  => {                entries..forEach(entry =>  => {                entries..forEach(entry =>  => {                entries..forEach(entry =>  => {
+                    if (entry..isIntersecting) {                    if (entry..isIntersecting) {                    if (entry..isIntersecting) {                    if (entry..isIntersecting) {
+                        entry..target..classList..add('visible');;                        entry..target..classList..add('visible');;                        entry..target..classList..add('visible');;                        entry..target..classList..add('visible');;
+                    }                    }                    }                    }
+                });;                });;                });;                });;
+            }, , observerOptions);;            }, , observerOptions);;            }, , observerOptions);;            }, , observerOptions);;
+            
+            const sections =  = document..querySelectorAll('.animate-on-scroll');;            const sections =  = document..querySelectorAll('.animate-on-scroll');;            const sections =  = document..querySelectorAll('.animate-on-scroll');;            const sections =  = document..querySelectorAll('.animate-on-scroll');;
+            sections..forEach(section =>  => {            sections..forEach(section =>  => {            sections..forEach(section =>  => {            sections..forEach(section =>  => {
+                observer..observe(section);;                observer..observe(section);;                observer..observe(section);;                observer..observe(section);;
+            });;            });;
+            
+            // Add delay to each category            // Add delay to each category            // Add delay to each category            // Add delay to each category
+            const categories =  = document..querySelectorAll('.category');;            const categories =  = document..querySelectorAll('.category');;            const categories =  = document..querySelectorAll('.category');;            const categories =  = document..querySelectorAll('.category');;
+            categories..forEach((category, , index) =>  => {            categories..forEach((category, , index) =>  => {            categories..forEach((category, , index) =>  => {            categories..forEach((category, , index) =>  => {
+                category..style..transitionDelay =  = `${index *  * 0.1}s`;;                category..style..transitionDelay =  = `${index *  * 0.1}s`;;                category..style..transitionDelay =  = `${index *  * 0.1}s`;;                category..style..transitionDelay =  = `${index *  * 0.1}s`;;
+            });;            });;            });;            });;
+        });;        });;        });;        });;
+    </    </</    </    </</</</scriptscriptscriptscriptscriptscriptscriptscript>>>>>>>>
+</body></body></body></body>
+    </html>
