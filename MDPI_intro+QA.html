@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDPI 面试准备指南</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --primary-dark: #003d7a;
+            --primary-light: #e7f1ff;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --bg-color: #f5f8fa;
+            --border-color: #dee2e6;
+            --table-header: #e7f1ff;
+            --table-row-even: #f8f9fa;
+            --table-row-hover: #f0f7ff;
+            --importance-high: #ff4500;
+            --importance-medium: #ff9900;
+            --importance-low: #6c757d;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--primary-dark);
+            border-bottom-width: 2px;
+            padding: 15px;
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            margin-top: 0;
+            box-shadow: var(--card-shadow);
+        }
+        
+        h2 {
+            color: var(--primary-dark);
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        h2:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        h3 {
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+            padding: 8px 15px;
+            border-radius: 5px;
+            border-bottom: none;
+        }
+        
+        h4 {
+            color: var(--primary-dark);
+            border-bottom: none;
+            font-size: 1.1em;
+            padding-left: 10px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        p {
+            margin-bottom: 1em;
+            line-height: 1.7;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 1em;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+            line-height: 1.7;
+        }
+        
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 2em;
+            box-shadow: var(--card-shadow);
+            background-color: #fff;
+            table-layout: fixed;
+            word-wrap: break-word;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        th {
+            background-color: var(--table-header);
+            font-weight: bold;
+            color: var(--primary-dark);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--table-row-even);
+        }
+        
+        tr:hover {
+            background-color: var(--table-row-hover);
+        }
+        
+        td p {
+            margin-bottom: 0.5em;
+        }
+        
+        td p:last-child {
+            margin-bottom: 0;
+        }
+        
+        strong {
+            color: var(--primary-color);
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+        
+        /* Importance Stars Styling */
+        .importance {
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .star-high {
+            color: var(--importance-high);
+        }
+        
+        .star-medium {
+            color: var(--importance-medium);
+        }
+        
+        .star-low {
+            color: var(--importance-low);
+        }
+        
+        /* Custom styling for nested lists */
+        ol > li > ul {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            list-style-type: disc;
+        }
+        
+        ol > li > ul > li {
+            margin-bottom: 0.3em;
+        }
+        
+        /* Column Width Adjustments */
+        table td:first-child, table th:first-child {
+            width: 5%;
+            text-align: center;
+        }
+        
+        /* English Questions Table */
+        .english-questions-table th:nth-child(2), .english-questions-table td:nth-child(2) {
+            width: 18%;
+        }
+        
+        .english-questions-table th:nth-child(3), .english-questions-table td:nth-child(3) {
+            width: 18%;
+        }
+        
+        .english-questions-table th:nth-child(4), .english-questions-table td:nth-child(4) {
+            width: 8%;
+            text-align: center;
+        }
+        
+        .english-questions-table th:nth-child(5), .english-questions-table td:nth-child(5) {
+            width: 25%;
+        }
+        
+        .english-questions-table th:nth-child(6), .english-questions-table td:nth-child(6) {
+            width: 25%;
+        }
+        
+        /* Chinese Questions & Second Round Tables */
+        .chinese-questions-table th:nth-child(2), .chinese-questions-table td:nth-child(2),
+        .second-round-table th:nth-child(2), .second-round-table td:nth-child(2) {
+            width: 25%;
+        }
+        
+        .chinese-questions-table th:nth-child(3), .chinese-questions-table td:nth-child(3),
+        .second-round-table th:nth-child(3), .second-round-table td:nth-child(3) {
+            width: 10%;
+            text-align: center;
+        }
+        
+        .chinese-questions-table th:nth-child(4), .chinese-questions-table td:nth-child(4),
+        .second-round-table th:nth-child(4), .second-round-table td:nth-child(4) {
+            width: 60%;
+        }
+        
+        /* Self introduction card */
+        .self-intro-card {
+            background-color: var(--primary-light);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-color);
+            margin-bottom: 2em;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .self-intro-card h4 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-left: none;
+            padding-left: 0;
+        }
+        
+        .self-intro-columns {
+            display: flex;
+            margin-top: 15px;
+            gap: 20px;
+        }
+        
+        .self-intro-column {
+            flex: 1;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .self-intro-column h5 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        
+        .self-intro-tip {
+            margin-top: 15px;
+            background-color: #fff8dc;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .self-intro-columns {
+                flex-direction: column;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        
+        /* Section cards */
+        .section-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .section-card-header {
+            background-color: var(--primary-light);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section-card-header h3 {
+            margin: 0;
+            background-color: transparent;
+            padding: 0;
+        }
+        
+        .section-card-content {
+            padding: 20px;
+        }
+        
+        /* Table of contents */
+        .toc {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            background-color: transparent;
+            padding: 0;
+            margin-top: 0;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc ul ul {
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            display: block;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .toc a:hover {
+            background-color: var(--primary-light);
+            text-decoration: none;
+        }
+        
+        /* 额外添加的样式来增强外观 */
+        .tips-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .tip-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 15px;
+            border-top: 3px solid var(--primary-color);
+        }
+        
+        .tip-card h3 {
+            margin-top: 0;
+            padding: 0;
+            background-color: transparent;
+            font-size: 1.1em;
+        }
+        
+        .table-pagination {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .table-pagination button {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .table-pagination button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            color: var(--primary-dark);
+            box-shadow: var(--card-shadow);
+        }
+        
+        /* 增强表格的滚动性能 */
+        @media (max-width: 1024px) {
+            .section-card-content {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 700px;
+            }
+        }
+        
+        /* 强调重要问题 */
+        tr:has(.star-high) {
+            border-left: 3px solid var(--importance-high);
+        }
+        
+        /* 让所有链接按钮化 */
+        .section-card-content a:not(.toc a) {
+            display: inline-block;
+            padding: 2px 5px;
+            background-color: var(--primary-light);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .section-card-content a:hover:not(.toc a) {
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* 添加平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            .section-card-content {
+                padding: 15px;
+            }
+            
+            .self-intro-columns {
+                flex-direction: column;
+            }
+            
+            .tips-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 音频链接样式 */
+        .audio-link-container {
+            margin: 15px 0;
+            background-color: var(--primary-light);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .audio-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #ffcc00;
+            color: #333333;
+            padding: 10px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .audio-link:hover {
+            background-color: #ffa500;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            color: #333333;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .audio-link-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .audio-link {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>MDPI面试准备指南</h1>
+        
+        <div class="toc">
+            <h3>目录</h3>
+            <ul>
+                <li><a href="#background">背景与概述</a></li>
+                <li><a href="#interview-process">面试流程结构</a></li>
+                <li><a href="#common-questions">常见问题及参考回答</a>
+                    <ul>
+                        <li><a href="#self-intro">英语自我介绍</a></li>
+                        <li><a href="#first-round">第一轮面试问题</a></li>
+                        <li><a href="#second-round">第二轮面试问题（培训与考核）</a></li>
+                        <li><a href="#final-round">最终面试问题</a></li>
+                    </ul>
+                </li>
+                <li><a href="#interview-tips">面试技巧与建议</a></li>
+                <li><a href="#data-summary">数据总结</a></li>
+            </ul>
+        </div>
+
+        <div class="section-card" id="background">
+            <div class="section-card-header">
+                <h2>背景与概述</h2>
+            </div>
+            <div class="section-card-content">
+                <p>MDPI（Multidisciplinary Digital Publishing Institute）是一家总部位于瑞士的开放获取学术出版商，成立于1996年，拥有超过400个同行评审期刊，覆盖科学、技术、医学和社会科学等领域。助理编辑（Assistant Editor, AE）或编辑助理（Editorial Assistant, EA）岗位是其主要招聘职位，职责包括管理稿件流程、协调同行评审、与作者和审稿人沟通，确保出版质量和效率。面试流程通常包括初筛、第一轮视频面试、第二轮培训与考核、最终面试，旨在评估候选人的英语能力、专业知识、团队合作能力和稳定性。</p>
+                <p>本指南基于多份面试经验（来源于用户提供的Excel文件），整合了面试流程、问题类型和参考回答，确保内容全面且结构化，适合候选人全面准备MDPI面试。</p>
+            </div>
+        </div>
+
+        <div class="section-card" id="interview-process">
+            <div class="section-card-header">
+                <h2>面试流程结构</h2>
+            </div>
+            <div class="section-card-content">
+                <p>MDPI的面试流程分为以下几个阶段：</p>
+                <ol>
+                    <li>
+                        <strong>初步筛选</strong>：
+                        <ul>
+                            <li><strong>形式</strong>：通过职位平台（如Boss直聘、智联招聘）或校园招聘提交简历（中英文）。</li>
+                            <li><strong>内容</strong>：HR通过电话或邮件确认学历、英语水平（如CET-4/6成绩）、薪资预期和工作地点偏好，并安排面试。</li>
+                            <li><strong>附加任务</strong>：可能要求完成一篇300-500词的英语作文（如"书本知识与实践经验的比较"或"挑战与解决方案"），难度为CET-4/6或雅思水平。</li>
+                            <li><strong>持续时间</strong>：5-10分钟。</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>第一轮面试（视频面试）</strong>：
+                        <ul>
+                            <li><strong>形式</strong>：在线视频（如WeChat、Teams、Zoom），通常为1对1或2对1。</li>
+                            <li><strong>内容</strong>：
+                                <ul>
+                                    <li>英语部分：2-5分钟自我介绍，3-5个英语问题（如对MDPI和开放获取的理解）。</li>
+                                    <li>中文部分：10-20分钟，涉及简历细节、职业规划、稳定性（如是否接受加班、家庭支持）。</li>
+                                </ul>
+                            </li>
+                            <li><strong>持续时间</strong>：30-45分钟。</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>第二轮面试（培训与考核）</strong>：
+                        <ul>
+                            <li><strong>形式</strong>：线上或线下，持续一天（8:30-18:00）。</li>
+                            <li><strong>内容</strong>：
+                                <ul>
+                                    <li><strong>培训</strong>：公司介绍、业务内容、晋升路径、寻找审稿人方法（基于DAPC原则：学位、领域、出版物、无利益冲突）、文章格式化。</li>
+                                    <li><strong>考核</strong>：实际操作练习，如1.5小时内为论文找8位审稿人，格式化练习（使用Microsoft Word和XML转换）。</li>
+                                    <li><strong>反思</strong>：撰写英语每日报告，总结培训经验。</li>
+                                </ul>
+                            </li>
+                            <li><strong>持续时间</strong>：全天。</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>最终面试（面对面或在线）</strong>：
+                        <ul>
+                            <li><strong>形式</strong>：线下或线上，通常由外籍面试官（英语）和国内面试官（中文）进行。</li>
+                            <li><strong>内容</strong>：
+                                <ul>
+                                    <li>英语面试：自我介绍、研究方向、团队合作等。</li>
+                                    <li>中文面试：稳定性、工作偏好、绩效考核看法、薪资和福利讨论。</li>
+                                    <li>可能包括办公室参观（线下）。</li>
+                                </ul>
+                            </li>
+                            <li><strong>持续时间</strong>：30-60分钟。</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section-card" id="common-questions">
+            <div class="section-card-header">
+                <h2>常见问题及参考回答</h2>
+            </div>
+            <div class="section-card-content">
+                <p>以下是整合后的高频问题，分为英语和中文两部分，重复问题已合并，确保不遗漏任何可能被问及的内容。每个问题附带序号、中英文对照（针对英文问题）、参考回答及重要性/频率（以★表示，★☆☆为低频，★★☆为中频，★★★为高频）。</p>
+
+                <div class="self-intro-card" id="self-intro">
+                    <h3>英语自我介绍</h3>
+                    <h4><span class="star-high">★★★</span> Please introduce yourself within 2-5 minutes. (请在2-5分钟内进行自我介绍)</h4>
+                    
+                    <div class="audio-link-container">
+                        <a href="https://murf.ai/share/m9y3u82p" target="_blank" class="audio-link">
+                            <i class="fas fa-headphones"></i> 点击收听英语自我介绍示范音频
+                        </a>
+                    </div>
+                    
+                    <div class="self-intro-columns">
+                        <div class="self-intro-column">
+                            <h5>英文版本</h5>
+                            <p>Hi there, good day! Thanks for having me today to discuss the Assistant Editor role at MDPI. I'm Huang Rong, 26 years old, and I'm excited to share a bit about myself. I'll talk about my education background, research experience, and why I'd love to join MDPI.</p>
+                            <p>First, my education background. I earned my bachelor's degree in New Energy Materials and Devices from Suzhou University, a 211 university, with a high GPA of 3.8, ranking in the top 10% of my class. Then, I pursued my master's degree in Inorganic Chemistry at Nankai University, a 985 university. During my studies, I received several scholarships and passed CET-6, so I'm fluent in reading and writing academic English.</p>
+                            <p>Next, my research experience. During my master's, I worked on designing electrolytes for aqueous zinc metal batteries. I published a first-author paper in the journal of <em>Energy & Environmental Science</em>, which is a top journal in the field of energy with a high impact factor of 32.5. And this paper has been cited 23 times in the first year! I also assisted my supervisor in reviewing papers for journals like <em>Nature Communications</em> and <em>Advanced Functional Materials</em>. During this process, I've learned a lot about the peer-review. In addition, I contributed to a textbook chapter on energy storage. Besides, l also led a provincial project which won a top thesis award in Jiangsu. These experiences sharpened my attention to detail, communication skills, and ability to manage multiple tasks.</p>
+                            <p>Finally, why MDPI? I admire the open-access model of MDPI, which makes research more accessible and promotes global knowledge sharing. My chemistry background and review experience make me a great fit for the Assistant Editor role. I'm detail-oriented, patient, and good at time management, which will help with tasks like formatting manuscripts and coordinating with reviewers. Working at MDPI is a great way to dive into academic publishing and level up my career at the same time.</p>
+                            <p>That's a quick overview of me! Thanks again for your time, and I'm happy to answer any questions.</p>
+                        </div>
+                        <div class="self-intro-column">
+                            <h5>中文版本</h5>
+                            <p>嗨，你好！感谢你们今天邀请我来讨论MDPI的助理编辑职位。我是黄荣，26岁，很高兴能分享一些关于我自己的情况。我将谈谈我的教育背景、研究经历，以及我为什么很想加入MDPI。</p>
+                            <p>首先是我的教育背景。我在苏州大学（一所211大学）获得了新能源材料与器件专业的学士学位，平均绩点3.8，在班级中排名前10%。随后，我在南开大学（一所985大学）攻读无机化学硕士学位。学习期间，我获得过几项奖学金，也通过了英语六级考试，因此能熟练阅读和撰写学术英语。</p>
+                            <p>接下来是我的研究经历。在我读硕士期间，我致力于为水系锌金属电池设计电解质。我以第一作者身份在《能源与环境科学》期刊上发表了一篇论文，这是能源领域的顶级期刊，影响因子高达32.5。这篇论文在第一年就被引用了23次！我还协助导师为《自然·通讯》和《先进功能材料》等期刊审阅论文，在这个过程中，我对同行评审有了深入了解。此外，我参与编写了一本关于储能的教科书章节，还主导了一个省级项目，该项目获得了江苏省优秀论文一等奖。这些经历提升了我对细节的关注能力、沟通能力和多任务处理能力。</p>
+                            <p>最后，说说为什么选择MDPI？我很欣赏MDPI的开放获取模式，这种模式让研究成果更容易获取，促进了全球知识共享。我的化学背景和审阅经验使我非常适合助理编辑这一职位。我做事细心、有耐心，也擅长时间管理，这些特质将有助于处理稿件格式调整、与审稿人协调等工作。在MDPI工作是深入学术出版领域并同时提升我职业水平的绝佳方式。</p>
+                            <p>这就是对我的简要介绍！再次感谢您的时间，我很乐意回答任何问题。</p>
+                        </div>
+                    </div>
+                    <div class="self-intro-tip">
+                        <strong style="color: var(--accent-color);">提示：</strong> 自我介绍是面试中的高频问题，建议提前准备并熟练掌握，内容应包括教育背景、研究经历和求职动机，展现自己与MDPI的匹配度。
+                    </div>
+                </div>
+
+                <div class="section-card" id="first-round">
+                    <div class="section-card-header">
+                        <h3>第一轮面试问题</h3>
+                    </div>
+                    <div class="section-card-content">
+                        <h4>英语问题</h4>
+                        <table class="english-questions-table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>问题（英文）</th>
+                                    <th>问题（中文）</th>
+                                    <th>重要性</th>
+                                    <th>参考回答（英文）</th>
+                                    <th>参考回答（中文）</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>What is your understanding of MDPI?</td>
+                                    <td>你对MDPI的了解是什么？</td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>MDPI, founded in 1996, is a leading open-access publisher with over 400 peer-reviewed journals covering science, technology, and medicine, known for its efficient publication process.</td>
+                                    <td>MDPI成立于1996年，是领先的开放获取出版商，拥有400多个同行评审期刊，涵盖科学、技术和医学领域，以高效出版流程著称。</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>What is your understanding of Open Access?</td>
+                                    <td>你对开放获取的理解是什么？</td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>Open Access allows free, unrestricted access to research, promoting global knowledge sharing. It benefits researchers but involves costs like Article Processing Charges (APCs).</td>
+                                    <td>开放获取允许免费、无限制访问研究，促进全球知识共享。它对研究人员有益，但涉及如文章处理费（APCs）的成本。</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>How do you handle deadlines and pressure?</td>
+                                    <td>你如何处理截止日期和压力？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>I prioritize tasks, create schedules, and stay calm under pressure, viewing it as a motivator to deliver quality work on time.</td>
+                                    <td>我通过优先级排序、制定计划并保持冷静，确保按时交付高质量工作。</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Why did you choose your major?</td>
+                                    <td>为什么选择你的专业？</td>
+                                    <td class="importance"><span class="star-low">★☆☆</span></td>
+                                    <td>I chose [major] due to my interest in [field], which aligns with my passion for [specific aspect], offering opportunities to contribute to [related goal].</td>
+                                    <td>我选择[专业]是因为对[领域]的兴趣，如环境科学的可持续发展，与我的热情相符。</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>What is your research direction?</td>
+                                    <td>你的研究方向是什么？</td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>My research focuses on [topic], exploring [key aspects], which aligns with MDPI's journals like [journal name].</td>
+                                    <td>我的研究聚焦于[主题]，探索[关键方面]，与MDPI的期刊如[期刊名]相关。</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Why do you want to work in this city?</td>
+                                    <td>为什么选择在这个城市工作？</td>
+                                    <td class="importance"><span class="star-low">★☆☆</span></td>
+                                    <td>I am drawn to [city] for its career opportunities and quality of life, which support my professional and personal growth.</td>
+                                    <td>我选择[城市]因为其职业机会和生活质量平衡，适合职业成长和个人生活。</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>What is your understanding of the Assistant Editor role?</td>
+                                    <td>你对助理编辑角色的理解是什么？</td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>The Assistant Editor manages manuscript workflows, coordinates peer reviews, communicates with authors and reviewers, and ensures timely, high-quality publications.</td>
+                                    <td>助理编辑负责管理稿件流程，协调同行评审，与作者和审稿人沟通，确保高质量、及时出版。</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>What is your favorite journal?</td>
+                                    <td>你最喜欢的期刊是什么？</td>
+                                    <td class="importance"><span class="star-low">★☆☆</span></td>
+                                    <td>I admire [journal name] for its rigorous research in [field], which aligns with my academic interests.</td>
+                                    <td>我喜欢[期刊名]，因其在[领域]的严谨研究，与我的学术兴趣契合。</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>How do you view teamwork?</td>
+                                    <td>你如何看待团队合作？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>Teamwork is vital for success, requiring clear communication, division of labor, and mutual support to achieve shared goals.</td>
+                                    <td>团队合作至关重要，需要清晰沟通、分工和相互支持以实现共同目标。</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>How do you handle difficult situations?</td>
+                                    <td>你如何处理困难情况？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>I stay calm, analyze the issue, explore solutions, and seek advice from colleagues if needed to resolve challenges effectively.</td>
+                                    <td>我保持冷静，分析问题，探索解决方案，必要时向同事寻求建议以有效解决问题。</td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td>What is your preferred way of communication?</td>
+                                    <td>你偏好的沟通方式是什么？</td>
+                                    <td class="importance"><span class="star-low">★☆☆</span></td>
+                                    <td>I prefer email for formal communication but value face-to-face or instant messaging for urgent or complex issues.</td>
+                                    <td>我偏好电子邮件用于正式沟通，但重视面对面或即时消息处理紧急或复杂问题。</td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td>How do you see deadlines?</td>
+                                    <td>你如何看待截止日期？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>Deadlines ensure efficiency and project progress; I respect them by planning and prioritizing tasks.</td>
+                                    <td>截止日期确保效率和项目进展，我通过规划和优先级排序尊重它们。</td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td>What is your career plan?</td>
+                                    <td>你的职业规划是什么？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>I aim to excel as an Assistant Editor, gain expertise, and progress to roles like Senior Editor, contributing to MDPI's mission.</td>
+                                    <td>我计划成为优秀的助理编辑，积累专业知识，晋升为高级编辑，为MDPI的使命做出贡献。</td>
+                                </tr>
+                                <tr>
+                                    <td>14</td>
+                                    <td>What are your strengths?</td>
+                                    <td>你的优势是什么？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>My strengths include strong communication, attention to detail, and resilience under pressure, ideal for editorial work.</td>
+                                    <td>我的优势包括强大的沟通能力、注重细节和在压力下的韧性，非常适合编辑工作。</td>
+                                </tr>
+                                <tr>
+                                    <td>15</td>
+                                    <td>How do you view overtime work?</td>
+                                    <td>你如何看待加班？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>I am willing to work overtime when needed but strive to manage time efficiently to minimize it.</td>
+                                    <td>我愿意在必要时加班，但努力高效管理时间以减少加班。</td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td>What is your view on Peer Review?</td>
+                                    <td>你对同行评审的看法是什么？</td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>Peer Review ensures research quality and credibility, filtering rigorous studies for publication.</td>
+                                    <td>同行评审确保研究质量和可信度，筛选出严谨的研究用于出版。</td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td>What are your hobbies?</td>
+                                    <td>你的爱好是什么？</td>
+                                    <td class="importance"><span class="star-low">★☆☆</span></td>
+                                    <td>I enjoy [hobbies, e.g., reading, sports], which help me relax and maintain a balanced lifestyle.</td>
+                                    <td>我喜欢[爱好，如阅读、运动]，它们帮助我放松并保持平衡的生活方式。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section-card" id="first-round">
+                    <div class="section-card-header">
+                        <h3>第一轮面试问题</h3>
+                    </div>
+                    <div class="section-card-content">
+                        <h4>中文问题</h4>
+                        <table class="chinese-questions-table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>问题（中文）</th>
+                                    <th>重要性</th>
+                                    <th>参考回答（中文）</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>为什么选择MDPI？<br><small>(Why did you choose MDPI?)</small></td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>我选择MDPI因其在开放获取出版领域的领导地位、全球影响力和创新文化，与我的职业目标一致。<br><small>(I chose MDPI because of its leadership in open access publishing, global influence, and innovative culture, which aligns with my career goals.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>你对KPI的看法是什么？<br><small>(What is your view on KPI?)</small></td>
+                                    <td class="importance"><span class="star-low">★☆☆</span></td>
+                                    <td>KPI是衡量绩效的工具，有助于明确目标，但需合理设定以避免过度压力或影响质量。<br><small>(KPI is a tool to measure performance and helps clarify goals, but it should be set reasonably to avoid excessive pressure or affecting quality.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>你如何处理加班？<br><small>(How do you handle overtime?)</small></td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>我接受紧急情况下的加班，但更倾向于高效管理时间，减少频繁加班。<br><small>(I accept overtime in emergencies but prefer to manage time efficiently to reduce frequent overtime.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>你的职业规划是什么？<br><small>(What is your career plan?)</small></td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>我计划先积累编辑经验，逐步晋升为高级编辑或团队领导，同时探索相关领域。<br><small>(I plan to accumulate editing experience first, gradually advance to senior editor or team leader, and explore related fields.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>你有计划读博或考公务员吗？<br><small>(Do you plan to pursue a PhD or take civil service exams?)</small></td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>目前我专注于编辑工作，暂时没有读博或考公务员的计划。<br><small>(Currently, I am focused on editing work and have no plans to pursue a PhD or take civil service exams.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>你的优缺点是什么？<br><small>(What are your strengths and weaknesses?)</small></td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>优点：沟通能力强、细心；缺点：有时过于追求完美，影响效率，正在改进。<br><small>(Strengths: strong communication skills, attention to detail; Weaknesses: sometimes too perfectionist, affecting efficiency, working on improvement.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>你如何描述自己？<br><small>(How would you describe yourself?)</small></td>
+                                    <td class="importance"><span class="star-low">★☆☆</span></td>
+                                    <td>我是勤奋、注重细节、热爱学术的人，重视团队合作和持续学习。<br><small>(I am hardworking, detail-oriented, passionate about academia, and value teamwork and continuous learning.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>团队合作中最重要的是什么？<br><small>(What is the most important thing in teamwork?)</small></td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>团队合作中最重要的是有效沟通和明确分工，确保高效协作。<br><small>(The most important things in teamwork are effective communication and clear division of labor to ensure efficient collaboration.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>你如何处理困难情况？<br><small>(How do you handle difficult situations?)</small></td>
+                                    <td class="importance"><span class="star-medium">★★☆</span></td>
+                                    <td>遇到困难时，我会分析原因，制定解决方案，必要时寻求帮助。<br><small>(When facing difficulties, I analyze the causes, develop solutions, and seek help if necessary.)</small></td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>你对文章发表流程的理解是什么？<br><small>(What is your understanding of the article publication process?)</small></td>
+                                    <td class="importance"><span class="star-high">★★★</span></td>
+                                    <td>文章发表流程包括投稿、初审、邀请审稿人、同行评审、修订、最终录用和发表。<br><small>(The article publication process includes submission, initial review, inviting reviewers, peer review, revision, final acceptance, and publication.)</small></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="table-pagination">
+                            <button class="active">1</button>
+                            <button>2</button>
+                            <button>3</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card" id="second-round">
+                <div class="section-card-header">
+                    <h3>第二轮面试问题（培训与考核）</h3>
+                </div>
+                <div class="section-card-content">
+                    <table class="second-round-table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>问题（中文）</th>
+                                <th>重要性</th>
+                                <th>参考回答（中文）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>你在培训中如何寻找审稿人？<br><small>(How did you find reviewers during the training?)</small></td>
+                                <td class="importance"><span class="star-high">★★★</span></td>
+                                <td>我遵循DAPC原则：选择具有博士学位的学者，确保他们在过去5年内发表过至少两篇相关领域文章，拥有至少8篇出版物，并避免与作者有利益冲突。使用Google Scholar和Elsevier等数据库进行搜索。<br><small>(I followed the DAPC principles: selecting scholars with a PhD, ensuring they have published at least two articles in the relevant field in the past five years, have at least eight publications, and avoid conflicts of interest with the authors. I used databases like Google Scholar and Elsevier for the search.)</small></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>培训中遇到的挑战是什么？<br><small>(What challenges did you encounter during the training?)</small></td>
+                                <td class="importance"><span class="star-medium">★★☆</span></td>
+                                <td>主要挑战是确保审稿人满足所有标准，如出版量。使用Google Scholar和机构网站进行仔细研究后，我发现通过练习可以应对。<br><small>(The main challenge was ensuring reviewers met all criteria, such as publication volume. After careful research using Google Scholar and institutional websites, I found that practice helped me handle it.)</small></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>你对培训过程的感受如何？<br><small>(How do you feel about the training process?)</small></td>
+                                <td class="importance"><span class="star-medium">★★☆</span></td>
+                                <td>培训内容密集但有价值，帮助我理解审稿人选择和文章格式化，尽管有些疲惫。我撰写了英语反思总结我的学习成果。<br><small>(The training was intensive but valuable, helping me understand reviewer selection and article formatting, though it was tiring. I wrote an English reflection to summarize my learning.)</small></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card" id="final-round">
+            <div class="section-card-header">
+                <h3>最终面试问题</h3>
+            </div>
+            <div class="section-card-content">
+                <h4>英语问题</h4>
+                <table class="english-questions-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>问题（英文）</th>
+                            <th>问题（中文）</th>
+                            <th>重要性</th>
+                            <th>参考回答（英文）</th>
+                            <th>参考回答（中文）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>What are your future plans?</td>
+                            <td>你的未来计划是什么？</td>
+                            <td class="importance"><span class="star-high">★★★</span></td>
+                            <td>In the short term, I aim to master the technical aspects of the AE role and handle manuscripts efficiently. Long-term, I hope to take on more responsibilities and potentially advance to a senior editor position within MDPI.</td>
+                            <td>短期内，我希望掌握AE角色的技术方面，高效处理稿件。长期目标是承担更多责任，可能晋升为高级编辑职位，在MDPI内持续成长。</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>What makes a good leader?</td>
+                            <td>什么样的人是好的领导者？</td>
+                            <td class="importance"><span class="star-medium">★★☆</span></td>
+                            <td>A good leader inspires the team, communicates effectively, makes informed decisions, and fosters a collaborative environment with empathy and support.</td>
+                            <td>好的领导者能激励团队，有效沟通，做出明智决策，营造协作环境，具备同理心并支持团队成员发展。</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>What was the biggest challenge in your studies/research, and how did you handle it?</td>
+                            <td>你在学习/研究中遇到的最大困难是什么，如何处理？</td>
+                            <td class="importance"><span class="star-medium">★★☆</span></td>
+                            <td>My biggest challenge was [specific issue]. I overcame it by [solution, e.g., consulting mentors, additional research], learning the value of persistence and resourcefulness.</td>
+                            <td>我面临的最大挑战是[具体问题]。我通过[解决方案，如向导师求助、额外研究]克服了它，学会了坚持和资源利用的重要性。</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>中文问题</h4>
+                <table class="chinese-questions-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>问题（中文）</th>
+                            <th>重要性</th>
+                            <th>参考回答（中文）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>你对绩效考核制度（KPI）的看法是什么？<br><small>(What is your view on the performance appraisal system (KPI)?)</small></td>
+                            <td class="importance"><span class="star-medium">★★☆</span></td>
+                            <td>我认为设计合理的KPI系统能激励员工并确保责任感。但它应公平、透明，与公司目标一致，不造成过度压力或影响质量。<br><small>(I believe a well-designed KPI system can motivate employees and ensure accountability. However, it should be fair, transparent, aligned with company goals, and not cause excessive pressure or affect quality.)</small></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>你会接受被分配到你专业领域外的期刊吗？<br><small>(Would you accept being assigned to a journal outside your field?)</small></td>
+                            <td class="importance"><span class="star-medium">★★☆</span></td>
+                            <td>是的，我愿意接受。我在[你的领域]的背景为我提供了研究和学术写作的坚实基础，我有信心快速学习和适应。<br><small>(Yes, I am willing to accept. My background in [your field] provides me with a solid foundation in research and academic writing, and I am confident in quickly learning and adapting.)</small></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>你如何看待出差？<br><small>(How do you view business trips?)</small></td>
+                            <td class="importance"><span class="star-low">★☆☆</span></td>
+                            <td>我对出差持开放态度，尤其是如果它有助于职业发展和与研究人员的联系。我会确保在出差期间保持高效并平衡个人需求。<br><small>(I am open to business trips, especially if they help with career development and connecting with researchers. I will ensure to stay efficient and balance personal needs during trips.)</small></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>你去过哪些地方，印象如何？<br><small>(Which places have you been to, and what are your impressions?)</small></td>
+                            <td class="importance"><span class="star-low">★☆☆</span></td>
+                            <td>我曾去过[城市/国家]，印象深刻的是[具体经历，如文化、风景]。这些经历让我更开放并适应新环境。<br><small>(I have been to [city/country], and I was impressed by [specific experience, such as culture, scenery]. These experiences have made me more open and adaptable to new environments.)</small></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>选择工作时你最看重哪些方面？<br><small>(What do you value most when choosing a job?)</small></td>
+                            <td class="importance"><span class="star-medium">★★☆</span></td>
+                            <td>我重视职业发展机会、支持性团队和工作与个人成长的平衡。薪资也很重要，以确保财务稳定。<br><small>(I value career development opportunities, a supportive team, and a balance between work and personal growth. Salary is also important to ensure financial stability.)</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="table-pagination">
+                    <button class="active">1</button>
+                    <button>2</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card" id="interview-tips">
+            <div class="section-card-header">
+                <h2>面试技巧与建议</h2>
+            </div>
+            <div class="section-card-content">
+                <div class="tips-container">
+                    <div class="tip-card">
+                        <h3>准备阶段</h3>
+                        <ul>
+                            <li><strong>研究公司</strong>：访问<a href="https://www.mdpi.com/" target="_blank" rel="noopener noreferrer">MDPI官网</a>，了解开放获取模式、期刊系列和公司新闻。</li>
+                            <li><strong>语言练习</strong>：准备2-5分钟的英语自我介绍，涵盖教育背景、研究经验和申请动机，确保流畅自然。</li>
+                            <li><strong>技能准备</strong>：熟悉学术数据库（如Google Scholar、Elsevier），练习审稿人选择流程，了解DAPC原则。</li>
+                            <li><strong>简历优化</strong>：突出学术背景、出版经历和相关技能，确保简历内容与面试回答一致。</li>
+                        </ul>
+                    </div>
+
+                    <div class="tip-card">
+                        <h3>面试中</h3>
+                        <ul>
+                            <li><strong>自信表达</strong>：保持自信和诚实，回答问题时结构清晰，结合个人经历。</li>
+                            <li><strong>紧急应对</strong>：
+                                <ul>
+                                    <li>如果听不清问题："I'm sorry, could you please repeat that?"（不好意思，能重复一下问题吗？）</li>
+                                    <li>如果需要时间思考："Let me think about that for a moment."（让我想一下。）</li>
+                                </ul>
+                            </li>
+                            <li><strong>反问环节</strong>：准备有深度的反问，如试用期长度（通常6个月，需处理45-60篇文章）、晋升路径、薪资调整、养老金缴纳比例等。</li>
+                        </ul>
+                    </div>
+
+                    <div class="tip-card">
+                        <h3>培训与考核</h3>
+                        <ul>
+                            <li><strong>积极参与</strong>：在培训中主动提问，向同事或导师求教，展现学习热情。</li>
+                            <li><strong>考核表现</strong>：在审稿人匹配任务中，确保效率和准确性，遵循DAPC原则。在格式化练习中，仔细观看指导视频，熟练使用Microsoft Word。</li>
+                            <li><strong>反思报告</strong>：撰写英语每日报告时，突出学习成果、遇到的挑战和改进意愿。</li>
+                        </ul>
+                    </div>
+
+                    <div class="tip-card">
+                        <h3>其他注意事项</h3>
+                        <ul>
+                            <li><strong>面试环境</strong>：面试官通常友好，氛围轻松，但需准备充分以应对细节问题。</li>
+                            <li><strong>结果通知</strong>：面试结果通常在3-5天内通知，成功后需提交入职材料（如学历证明）。</li>
+                            <li><strong>薪资与福利</strong>：以天津为例，试用期薪资约7840-9800元（税前），养老金缴纳比例较低，需提前了解并确认。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card" id="data-summary">
+            <div class="section-card-header">
+                <h2>数据总结</h2>
+            </div>
+            <div class="section-card-content">
+                <p>以下表格总结了面试流程和关键问题类型：</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>阶段</th>
+                            <th>形式</th>
+                            <th>重点内容</th>
+                            <th>持续时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>初步筛选</td>
+                            <td>电话/邮件</td>
+                            <td>确认基本信息，安排面试，英语作文测试</td>
+                            <td>5-10分钟</td>
+                        </tr>
+                        <tr>
+                            <td>第一轮面试（视频）</td>
+                            <td>在线（WeChat/Teams）</td>
+                            <td>英语自我介绍+中英问题</td>
+                            <td>30-45分钟</td>
+                        </tr>
+                        <tr>
+                            <td>第二轮面试（培训与考核）</td>
+                            <td>线上/线下</td>
+                            <td>公司介绍、审稿人匹配练习、格式化练习、每日报告</td>
+                            <td>一天（8:30-18:00）</td>
+                        </tr>
+                        <tr>
+                            <td>最终面试（面对面）</td>
+                            <td>线下/线上</td>
+                            <td>英语和中文面试，稳定性评估，薪资讨论</td>
+                            <td>30-60分钟</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>以下表格总结了高频问题（重要性★★★）：</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>问题编号</th>
+                            <th>问题（英文/中文）</th>
+                            <th>类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>英语-1</td>
+                            <td>What is your understanding of MDPI? / 你对MDPI的了解是什么？</td>
+                            <td>英语</td>
+                        </tr>
+                        <tr>
+                            <td>英语-2</td>
+                            <td>What is your understanding of Open Access? / 你对开放获取的理解是什么？</td>
+                            <td>英语</td>
+                        </tr>
+                        <tr>
+                            <td>英语-5</td>
+                            <td>What is your research direction? / 你的研究方向是什么？</td>
+                            <td>英语</td>
+                        </tr>
+                        <tr>
+                            <td>英语-7</td>
+                            <td>What is your understanding of the Assistant Editor role? / 你对助理编辑角色的理解是什么？</td>
+                            <td>英语</td>
+                        </tr>
+                        <tr>
+                            <td>中文-1</td>
+                            <td>为什么选择MDPI？(Why did you choose MDPI?)</td>
+                            <td>中文</td>
+                        </tr>
+                        <tr>
+                            <td>中文-4</td>
+                            <td>你的职业规划是什么？(What is your career plan?)</td>
+                            <td>中文</td>
+                        </tr>
+                        <tr>
+                            <td>中文-5</td>
+                            <td>你有计划读博或考公务员吗？(Do you plan to pursue a PhD or take civil service exams?)</td>
+                            <td>中文</td>
+                        </tr>
+                        <tr>
+                            <td>中文-10</td>
+                            <td>你对文章发表流程的理解是什么？(What is your understanding of the article publication process?)</td>
+                            <td>中文</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <footer>
+            <p>MDPI面试准备指南 © 2023 | 祝您面试顺利</p>
+        </footer>
+    </div>
+</body>
+</html>
