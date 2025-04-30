@@ -677,6 +677,7 @@
         <div class="learning-modal" id="learning-modal">
             <div class="learning-modal-title">继续学习</div>
             <div>您上次学习到了 <strong id="last-term">单词</strong></div>
+            <div style="margin-top: 5px; font-size: 0.9em; color: #666;">上次时间: <span id="last-study-time">未知</span></div>
             <div class="learning-modal-actions">
                 <button class="learning-modal-button secondary" id="dismiss-learning">忽略</button>
                 <button class="learning-modal-button" id="continue-learning">继续学习</button>
@@ -939,7 +940,7 @@
         
         
         <footer>
-            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 04:14:27</p>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 04:28:30</p>
         </footer>
     </div>
     
@@ -1565,6 +1566,16 @@
                             
                             if (hoursSinceLastStudy < 24) {
                                 lastTermDisplay.textContent = positionData.term;
+                                
+                                // 将时间戳转换为可读时间格式
+                                const lastStudyDate = new Date(positionData.timestamp);
+                                const formattedTime = lastStudyDate.getFullYear() + '-' + 
+                                                     String(lastStudyDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                                                     String(lastStudyDate.getDate()).padStart(2, '0') + ' ' + 
+                                                     String(lastStudyDate.getHours()).padStart(2, '0') + ':' + 
+                                                     String(lastStudyDate.getMinutes()).padStart(2, '0');
+                                document.getElementById('last-study-time').textContent = formattedTime;
+                                
                                 setTimeout(() => {
                                     learningModal.classList.add('active');
                                 }, 1000);
@@ -1619,9 +1630,17 @@
                 cell.addEventListener('dblclick', function() {
                     markLearningPosition(this);
                     
+                    // 获取当前时间
+                    const now = new Date();
+                    const formattedTime = now.getFullYear() + '-' + 
+                                         String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                                         String(now.getDate()).padStart(2, '0') + ' ' + 
+                                         String(now.getHours()).padStart(2, '0') + ':' + 
+                                         String(now.getMinutes()).padStart(2, '0');
+                    
                     // 显示提示
                     const feedback = document.createElement('div');
-                    feedback.textContent = '已设为学习位置';
+                    feedback.innerHTML = `已设为学习位置<br><span style="font-size: 0.85em; opacity: 0.8;">时间: ${formattedTime}</span>`;
                     feedback.style.cssText = `
                         position: fixed;
                         top: 50%;
@@ -1633,6 +1652,7 @@
                         border-radius: 4px;
                         z-index: 1000;
                         pointer-events: none;
+                        text-align: center;
                     `;
                     document.body.appendChild(feedback);
                     
