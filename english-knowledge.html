@@ -109,15 +109,16 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
+            font-size: 0.95rem; /* 缩小整体表格字体 */
         }
         
         .knowledge-table th, 
         .knowledge-table td {
-            padding: 12px 10px; /* 减少水平填充 */
+            padding: 8px 8px; /* 减少单元格内填充 */
             border: 1px solid var(--border-color);
             word-wrap: break-word;
             vertical-align: top;
-            line-height: 1.7;
+            line-height: 1.5; /* 减小行高 */
         }
         
         .knowledge-table th {
@@ -161,6 +162,11 @@
             border-radius: 3px;
         }
         
+        /* 为二级内容添加更小的字体样式 */
+        .usage-cell, .synonym-cell, .antonym-cell, .note-cell {
+            font-size: 0.9rem; /* 进一步缩小二级内容的字体 */
+        }
+        
         .synonym-cell {
             width: 22%;       /* 增加同义表达列宽 */
         }
@@ -194,7 +200,7 @@
         }
         
         .knowledge-table li {
-            margin-bottom: 3px;
+            margin-bottom: 2px; /* 减少列表项间距 */
             position: relative;
             padding-left: 0.7em;  /* 减少左侧填充 */
         }
@@ -506,7 +512,7 @@
         
         
         <footer>
-            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 02:23:02</p>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 02:54:09</p>
         </footer>
     </div>
     
