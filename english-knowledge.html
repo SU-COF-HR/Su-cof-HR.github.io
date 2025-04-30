@@ -16,6 +16,7 @@
             --unfamiliar-color: #f64e60;
             --moderate-color: #ffa800;
             --familiar-color: #0bb783;
+            --learning-marker-color: #4361ee;
         }
         
         * {
@@ -518,6 +519,88 @@
         tr.filtered-out {
             display: none;
         }
+        
+        /* 学习进度标记样式 */
+        .learning-marker {
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 80%;
+            background-color: var(--learning-marker-color);
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(67, 97, 238, 0.5);
+        }
+        
+        .learning-button {
+            background-color: var(--learning-marker-color);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .learning-button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        /* 学习进度提示弹窗 */
+        .learning-modal {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            width: 280px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+        
+        .learning-modal.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+        
+        .learning-modal-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        .learning-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .learning-modal-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .learning-modal-button.secondary {
+            background-color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -548,6 +631,13 @@
                     <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
                 核心词大纲
+            </button>
+            
+            <button class="learning-button" id="toggle-learning-marker">
+                <svg class="outline-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
+                </svg>
+                学习进度
             </button>
         </div>
         
@@ -587,6 +677,16 @@
                     <span>点击词条快速定位</span>
                     <span>共 <span class="outline-count" id="outline-count">0</span> 个核心词</span>
                 </div>
+            </div>
+        </div>
+        
+        <!-- 学习进度提示弹窗 -->
+        <div class="learning-modal" id="learning-modal">
+            <div class="learning-modal-title">继续学习</div>
+            <div>您上次学习到了 <strong id="last-term">单词</strong></div>
+            <div class="learning-modal-actions">
+                <button class="learning-modal-button secondary" id="dismiss-learning">忽略</button>
+                <button class="learning-modal-button" id="continue-learning">继续学习</button>
             </div>
         </div>
         
@@ -837,7 +937,7 @@
         
         
         <footer>
-            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 03:38:54</p>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 03:53:48</p>
         </footer>
     </div>
     
@@ -1407,6 +1507,195 @@
             // 初始化熟悉度标签和筛选
             addFamiliarityBadges();
             loadFamiliarityFilterSettings();
+            
+            // 学习进度标记功能
+            const learningButton = document.getElementById('toggle-learning-marker');
+            const learningModal = document.getElementById('learning-modal');
+            const continueButton = document.getElementById('continue-learning');
+            const dismissButton = document.getElementById('dismiss-learning');
+            const lastTermDisplay = document.getElementById('last-term');
+            
+            // 存储键
+            const LEARNING_POSITION_KEY = 'learning_position';
+            
+            // 记录当前学习位置
+            function markLearningPosition(termCell) {
+                // 移除所有现有标记
+                document.querySelectorAll('.learning-marker').forEach(marker => {
+                    marker.remove();
+                });
+                
+                // 创建新标记
+                const marker = document.createElement('div');
+                marker.className = 'learning-marker';
+                
+                // 添加到单元格
+                termCell.appendChild(marker);
+                
+                // 保存学习位置
+                const term = termCell.querySelector('span').textContent.trim();
+                const rowIndex = Array.from(table.querySelectorAll('tbody tr')).indexOf(termCell.closest('tr'));
+                
+                // 保存位置信息到本地存储
+                localStorage.setItem(LEARNING_POSITION_KEY, JSON.stringify({
+                    term: term,
+                    rowIndex: rowIndex,
+                    timestamp: Date.now()
+                }));
+            }
+            
+            // 加载学习位置
+            function loadLearningPosition() {
+                try {
+                    const positionData = JSON.parse(localStorage.getItem(LEARNING_POSITION_KEY));
+                    
+                    if (positionData) {
+                        // 显示标记
+                        const rows = table.querySelectorAll('tbody tr');
+                        
+                        if (positionData.rowIndex < rows.length) {
+                            const termCell = rows[positionData.rowIndex].querySelector('.term-cell');
+                            const marker = document.createElement('div');
+                            marker.className = 'learning-marker';
+                            termCell.appendChild(marker);
+                            
+                            // 如果上次学习时间在24小时内，显示提示弹窗
+                            const hoursSinceLastStudy = (Date.now() - positionData.timestamp) / (1000 * 60 * 60);
+                            
+                            if (hoursSinceLastStudy < 24) {
+                                lastTermDisplay.textContent = positionData.term;
+                                setTimeout(() => {
+                                    learningModal.classList.add('active');
+                                }, 1000);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('无法加载学习位置:', e);
+                }
+            }
+            
+            // 继续学习
+            function continueFromLastPosition() {
+                try {
+                    const positionData = JSON.parse(localStorage.getItem(LEARNING_POSITION_KEY));
+                    
+                    if (positionData) {
+                        const rows = table.querySelectorAll('tbody tr');
+                        
+                        if (positionData.rowIndex < rows.length) {
+                            // 滚动到上次学习位置
+                            rows[positionData.rowIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            
+                            // 添加高亮效果
+                            rows[positionData.rowIndex].classList.add('highlight-row');
+                            setTimeout(() => {
+                                rows[positionData.rowIndex].classList.remove('highlight-row');
+                            }, 2000);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('无法继续学习:', e);
+                }
+                
+                // 隐藏弹窗
+                learningModal.classList.remove('active');
+            }
+            
+            // 事件：点击学习进度按钮
+            learningButton.addEventListener('click', function() {
+                // 打开大纲视图，以便选择学习位置
+                showOutline();
+                
+                // 提示用户选择学习位置
+                const oldTitle = document.querySelector('.outline-header h3').textContent;
+                document.querySelector('.outline-header h3').textContent = '选择学习位置';
+                
+                // 更改大纲项目的点击事件
+                const outlineItems = document.querySelectorAll('.outline-item');
+                
+                // 保存原始点击处理程序
+                if (!window.originalClickHandlers) {
+                    window.originalClickHandlers = [];
+                    outlineItems.forEach(item => {
+                        const oldClick = item.onclick;
+                        window.originalClickHandlers.push(oldClick);
+                    });
+                }
+                
+                outlineItems.forEach((item, index) => {
+                    item.onclick = function(e) {
+                        e.preventDefault();
+                        
+                        // 隐藏大纲
+                        hideOutline();
+                        
+                        // 查找对应的行和单元格
+                        const termText = item.textContent.trim();
+                        const termCells = table.querySelectorAll('tbody tr td.term-cell');
+                        
+                        for (const cell of termCells) {
+                            const cellText = cell.textContent.trim();
+                            if (cellText === termText) {
+                                // 标记学习位置
+                                markLearningPosition(cell);
+                                
+                                // 滚动到此位置
+                                cell.closest('tr').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                break;
+                            }
+                        }
+                        
+                        // 还原大纲标题
+                        document.querySelector('.outline-header h3').textContent = oldTitle;
+                        
+                        // 还原原始点击处理程序
+                        outlineItems.forEach((item, idx) => {
+                            item.onclick = window.originalClickHandlers[idx];
+                        });
+                    };
+                });
+            });
+            
+            // 事件：继续学习
+            continueButton.addEventListener('click', continueFromLastPosition);
+            
+            // 事件：忽略提示
+            dismissButton.addEventListener('click', function() {
+                learningModal.classList.remove('active');
+            });
+            
+            // 初始加载学习位置
+            loadLearningPosition();
+            
+            // 核心词点击事件，用于主动设置学习位置
+            document.querySelectorAll('.term-cell').forEach(cell => {
+                cell.addEventListener('dblclick', function() {
+                    markLearningPosition(this);
+                    
+                    // 显示提示
+                    const feedback = document.createElement('div');
+                    feedback.textContent = '已设为学习位置';
+                    feedback.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(0,0,0,0.7);
+                        color: white;
+                        padding: 10px 15px;
+                        border-radius: 4px;
+                        z-index: 1000;
+                        pointer-events: none;
+                    `;
+                    document.body.appendChild(feedback);
+                    
+                    setTimeout(() => {
+                        feedback.style.opacity = 0;
+                        setTimeout(() => feedback.remove(), 300);
+                    }, 1500);
+                });
+            });
         });
     </script>
 </body>
