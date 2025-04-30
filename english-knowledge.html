@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语知识库</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #dee2e6;
+            --header-bg: #3a56d4;  /* 更改为更柔和的蓝色 */
+            --header-text: white;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 1.2rem 0;  /* 减少上下填充 */
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            margin-bottom: 1.5rem;  /* 减少底部边距 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.2rem;  /* 减小标题字体 */
+            margin-bottom: 0.3rem;  /* 减少标题下方间距 */
+        }
+        
+        .subtitle {
+            font-size: 1rem;  /* 减小副标题字体 */
+            opacity: 0.9;
+        }
+        
+        /* 列控制面板样式 */
+        .column-controls {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .column-controls label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .column-controls label:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .column-controls input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        
+        .control-title {
+            font-weight: bold;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        /* 当列被隐藏时的样式 */
+        .hidden-column {
+            display: none;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;  /* 减少表格上方间距 */
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        .knowledge-table th, 
+        .knowledge-table td {
+            padding: 12px 10px; /* 减少水平填充 */
+            border: 1px solid var(--border-color);
+            word-wrap: break-word;
+            vertical-align: top;
+            line-height: 1.7;
+        }
+        
+        .knowledge-table th {
+            background-color: var(--header-bg);
+            color: white;
+            font-weight: bold;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            cursor: col-resize;
+            user-select: none;
+        }
+        
+        .knowledge-table tr:nth-child(even) {
+            background-color: rgba(0,0,0,0.02);
+        }
+        
+        .knowledge-table tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .term-cell {
+            font-weight: bold;
+            color: var(--primary-color);
+            width: 12%;       /* 减少核心词列宽 */
+        }
+        
+        .meaning-cell {
+            background-color: rgba(67, 97, 238, 0.03);
+            width: 15%;       /* 适当调整 */
+        }
+        
+        .usage-cell {
+            width: 22%;       /* 增加应用场景列宽 */
+        }
+        
+        .usage-cell strong {
+            background-color: rgba(67, 97, 238, 0.1);
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+        
+        .synonym-cell {
+            width: 22%;       /* 增加同义表达列宽 */
+        }
+        
+        .synonym-cell em {
+            text-decoration: underline;
+            text-decoration-color: var(--secondary-color);
+            text-decoration-thickness: 1px;
+        }
+        
+        .antonym-cell {
+            background-color: rgba(0, 0, 0, 0.01);
+            width: 14%;       /* 适当调整 */
+        }
+        
+        .note-cell {
+            background-color: rgba(255, 193, 7, 0.03);
+            width: 15%;       /* 适当调整 */
+        }
+        
+        .no-content {
+            color: #999;
+            font-style: italic;
+        }
+        
+        /* 改进列表项显示 - 减少项目符号占用空间 */
+        .knowledge-table ul {
+            margin: 0;
+            padding-left: 10px;  /* 进一步减少左侧填充 */
+            list-style: none;    /* 不显示默认项目符号 */
+        }
+        
+        .knowledge-table li {
+            margin-bottom: 3px;
+            position: relative;
+            padding-left: 0.7em;  /* 减少左侧填充 */
+        }
+        
+        .knowledge-table li:before {
+            content: "•";
+            position: absolute;
+            left: -0.2em;         /* 负边距使符号更靠近文本 */
+            color: var(--primary-color);
+            font-size: 0.8em;
+            top: 0.1em;
+        }
+        
+        strong {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        em {
+            color: var(--secondary-color);
+        }
+        
+        .paragraph-break {
+            margin-bottom: 0.8em;
+            display: block;
+        }
+        
+        /* 单元格高亮效果 */
+        .knowledge-table td:hover {
+            background-color: rgba(67, 97, 238, 0.03);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.2rem 0;  /* 减少页脚填充 */
+            margin-top: 1.5rem;  /* 减少页脚上方间距 */
+            font-size: 0.9rem;
+            color: #666;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .knowledge-table th, 
+            .knowledge-table td {
+                padding: 8px 10px;
+            }
+        }
+        
+        /* 保存设置按钮 */
+        .save-settings {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        .save-settings:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        /* 预设布局按钮 */
+        .preset-layouts {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+        
+        .preset-button {
+            background-color: #e9ecef;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .preset-button:hover {
+            background-color: #dce3f0;
+        }
+        
+        /* 大纲视图样式 */
+        .outline-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .outline-button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .outline-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .outline-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .outline-modal.active {
+            display: flex;
+        }
+        
+        .outline-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .outline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .outline-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .close-outline {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .outline-search {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .outline-search input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .outline-list {
+            padding: 10px 0;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+        
+        .outline-item {
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+        }
+        
+        .outline-item:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .outline-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .outline-count {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>英语知识库</h1>
+            <p class="subtitle">Obsidian自动同步的英语学习笔记</p>
+        </header>
+        
+        <!-- 列控制面板 -->
+        <div class="column-controls">
+            <span class="control-title">显示列:</span>
+            <label><input type="checkbox" class="column-toggle" data-column="0" checked> 核心词</label>
+            <label><input type="checkbox" class="column-toggle" data-column="1" checked> 含义</label>
+            <label><input type="checkbox" class="column-toggle" data-column="2" checked> 应用场景</label>
+            <label><input type="checkbox" class="column-toggle" data-column="3" checked> 同义表达</label>
+            <label><input type="checkbox" class="column-toggle" data-column="4" checked> 反义表达</label>
+            <label><input type="checkbox" class="column-toggle" data-column="5" checked> 注意点</label>
+            
+            <div class="preset-layouts">
+                <button class="preset-button" data-preset="core-only">仅核心词+含义</button>
+                <button class="preset-button" data-preset="learning">学习模式</button>
+                <button class="preset-button" data-preset="all">显示全部</button>
+            </div>
+            
+            <button class="outline-button" id="show-outline">
+                <svg class="outline-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                核心词大纲
+            </button>
+        </div>
+        
+        <!-- 大纲视图弹窗 -->
+        <div class="outline-modal" id="outline-modal">
+            <div class="outline-content">
+                <div class="outline-header">
+                    <h3>核心词大纲</h3>
+                    <button class="close-outline" id="close-outline">&times;</button>
+                </div>
+                <div class="outline-search">
+                    <input type="text" id="outline-search-input" placeholder="搜索核心词...">
+                </div>
+                <div class="outline-list" id="outline-list">
+                    <!-- 核心词列表将由JavaScript动态填充 -->
+                </div>
+                <div class="outline-footer">
+                    <span>点击词条快速定位</span>
+                    <span>共 <span class="outline-count" id="outline-count">0</span> 个核心词</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container"><table class="knowledge-table">
+<thead><tr><th>核心词</th><th>含义</th><th>应用场景</th><th>同义表达</th><th>反义表达</th><th>注意点</th></tr></thead><tbody>
+<tr><td class="term-cell">consulting mentors</td><td class="meaning-cell">• consulting为consult的现在分词形式，常见意思为“咨询；请教；查阅” ，mentors意思是“导师；指导者” ，“consulting mentors”可理解为“咨询导师；向导师请教” 。</td><td class="usage-cell">• <strong>常用于学术、职场等场景中，当人们需要专业指导、建议时会涉及此表达。</strong>
+• I am consulting mentors about my research project.（我正在就我的研究项目咨询导师。）
+• He often consults mentors for career advice.（他经常向导师请教职业方面的建议。）</td><td class="synonym-cell">• <strong><em>asking mentors for advice</strong></em>
+• I am asking mentors for advice on how to solve this problem.（我正在向导师请教如何解决这个问题。）
+• <strong><em>seeking guidance from mentors</strong></em>
+• She is seeking guidance from mentors to improve her work performance.（她正在寻求导师的指导以提高工作表现。）
+• 细微差别: “asking mentors for advice”更直接强调询问建议；“seeking guidance from mentors”强调寻求指导，“guidance”比“advice”含义更宽泛，不仅包含建议，还可能有引导、指引等方面。</td><td class="antonym-cell">• 无明确反义表达。</td><td class="note-cell">• “consulting”容易误写为“consuting”，注意“l”不能漏写。</td></tr>
+<tr><td class="term-cell">peer-reviewed</td><td class="meaning-cell">• 意为“同行评审的；经同行评议的” 。</td><td class="usage-cell">• <strong>常见于学术、科研等领域，用于描述研究成果、论文等是否经过同行专家评估。</strong>
+• This is a peer - reviewed journal.（这是一本经过同行评审的期刊。）
+• The research paper has passed the peer - reviewed process.（这篇研究论文已经通过了同行评议流程。）</td><td class="synonym-cell">• <strong><em>reviewed by peers</strong></em>
+• The thesis has been reviewed by peers.（这篇论文已经由同行评审过了。）
+• <strong><em>evaluated by colleagues</strong></em>
+• His work is evaluated by colleagues in the field.（他的工作由该领域的同行进行评估。）
+• 细微差别：“reviewed by peers”表述更直接，强调同行审查这个动作；“evaluated by colleagues”中的“evaluate”含义更广，除了审查，还可能有评价、评估其价值等方面。</td><td class="antonym-cell">• <strong><em>non - peer - reviewed（非同行评审的）</strong></em>
+• This is a non - peer - reviewed report.（这是一份未经同行评审的报告。）</td><td class="note-cell">• 注意连字符的使用，在构成复合形容词时，“peer-reviewed”中间需用连字符连接。</td></tr>
+<tr><td class="term-cell">prioritize</td><td class="meaning-cell">• 1. 优先处理；优先考虑。
+• 2. 按重要性排列；划分优先顺序。</td><td class="usage-cell">• <strong>常用于时间管理、任务安排等场景，当需要对事务进行重要性排序或决定先做什么时使用。</strong>
+• We should prioritize our tasks according to their urgency.（我们应该根据任务的紧急程度优先处理它们。）
+• She always prioritizes her family over work.（她总是把家庭优先于工作考虑。）</td><td class="synonym-cell">• <strong><em>give priority to</strong></em>
+• We need to give priority to this project.（我们需要优先考虑这个项目。）
+• <strong><em>put...first</strong></em>
+• You should put your health first.（你应该把你的健康放在首位。）
+• 细微差别：“prioritize”更强调对事物进行重要性排序的动作；“give priority to”突出给予某事物优先权；“put...first”表达将……置于首位，更口语化。</td><td class="antonym-cell">• <strong><em>deprioritize</strong></em>
+• Due to the change of plan, we have to deprioritize this task.（由于计划变更，我们不得不降低这项任务的优先级。）
+• 细微差别：“prioritize”是提高优先级、优先处理，“deprioritize”则是降低优先级。</td><td class="note-cell">• 该词的拼写中“ri”不要误写为“ir”。</td></tr>
+</tbody></table></div>
+        <style>
+        /* 这里保留JavaScript辅助解析所需的自定义类名标记 */
+        </style>
+        
+        
+        <footer>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 02:03:59</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取表格和表头单元格
+            const table = document.querySelector('.knowledge-table');
+            const headers = table.querySelectorAll('th');
+            
+            // 默认列宽 - 更新为与CSS匹配的值
+            const defaultColumnWidths = [
+                '12%',  // 核心词
+                '15%',  // 含义
+                '22%',  // 应用场景
+                '22%',  // 同义表达
+                '14%',  // 反义表达
+                '15%'   // 注意点
+            ];
+            
+            // 为每个列设置初始宽度
+            headers.forEach((header, index) => {
+                header.style.width = defaultColumnWidths[index];
+            });
+            
+            // 实现调整列宽功能
+            headers.forEach((header, index) => {
+                let isResizing = false;
+                let startX, startWidth;
+                
+                header.addEventListener('mousedown', function(e) {
+                    // 只在列边缘处理拖动
+                    const headerRect = header.getBoundingClientRect();
+                    const edgeSize = 10; // 边缘大小
+
+                    if (e.clientX > headerRect.right - edgeSize) {
+                        isResizing = true;
+                        startX = e.clientX;
+                        startWidth = headerRect.width;
+                        
+                        // 添加拖动事件监听器
+                        document.addEventListener('mousemove', handleMouseMove);
+                        document.addEventListener('mouseup', handleMouseUp);
+                        
+                        // 阻止默认事件和冒泡
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+                
+                function handleMouseMove(e) {
+                    if (isResizing) {
+                        // 计算新宽度
+                        const width = startWidth + (e.clientX - startX);
+                        
+                        // 应用新宽度
+                        if (width > 50) { // 最小宽度限制
+                            header.style.width = `${width}px`;
+                            header.style.minWidth = `${width}px`;
+                            
+                            // 同步应用到每一行的对应单元格
+                            const colIndex = Array.from(header.parentNode.children).indexOf(header);
+                            const rows = table.querySelectorAll('tbody tr');
+                            
+                            rows.forEach(row => {
+                                const cell = row.children[colIndex];
+                                if (cell) {
+                                    cell.style.width = `${width}px`;
+                                    cell.style.minWidth = `${width}px`;
+                                }
+                            });
+                        }
+                    }
+                }
+                
+                function handleMouseUp() {
+                    isResizing = false;
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                }
+                
+                // 视觉反馈
+                header.addEventListener('mousemove', function(e) {
+                    const headerRect = header.getBoundingClientRect();
+                    const edgeSize = 10;
+
+                    if (e.clientX > headerRect.right - edgeSize) {
+                        header.style.cursor = 'col-resize';
+                    } else {
+                        header.style.cursor = 'default';
+                    }
+                });
+            });
+            
+            // 处理列表项显示问题
+            document.querySelectorAll('.knowledge-table td').forEach(cell => {
+                const content = cell.innerHTML;
+                if (content.includes('•')) {
+                    // 将项目符号转换为更紧凑的列表
+                    const newContent = '<ul>' + 
+                        content.split('•').filter(item => item.trim())
+                            .map(item => {
+                                // 处理嵌套标签以保持格式
+                                const trimmedItem = item.trim();
+                                return `<li>${trimmedItem}</li>`;
+                            })
+                            .join('') + 
+                        '</ul>';
+                    cell.innerHTML = newContent;
+                }
+            });
+            
+            // 列显示/隐藏功能
+            const columnToggles = document.querySelectorAll('.column-toggle');
+            const presetButtons = document.querySelectorAll('.preset-button');
+            
+            // 从本地存储加载列设置
+            loadColumnSettings();
+            
+            // 切换列显示/隐藏
+            columnToggles.forEach(toggle => {
+                toggle.addEventListener('change', updateColumnVisibility);
+            });
+            
+            // 预设布局按钮
+            presetButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const preset = this.dataset.preset;
+                    applyPresetLayout(preset);
+                });
+            });
+            
+            // 更新列的可见性
+            function updateColumnVisibility() {
+                columnToggles.forEach((toggle, index) => {
+                    const isVisible = toggle.checked;
+                    const columnIndex = parseInt(toggle.dataset.column);
+                    
+                    // 更新表头
+                    if (headers[columnIndex]) {
+                        headers[columnIndex].classList.toggle('hidden-column', !isVisible);
+                    }
+                    
+                    // 更新表体中的所有单元格
+                    const cells = table.querySelectorAll(`tbody tr td:nth-child(${columnIndex + 1})`);
+                    cells.forEach(cell => {
+                        cell.classList.toggle('hidden-column', !isVisible);
+                    });
+                });
+                
+                // 保存设置到本地存储
+                saveColumnSettings();
+                
+                // 重新计算可见列的宽度比例
+                redistributeColumnWidths();
+            }
+            
+            // 应用预设布局
+            function applyPresetLayout(preset) {
+                switch(preset) {
+                    case 'core-only':
+                        // 只显示核心词和含义
+                        columnToggles.forEach((toggle, index) => {
+                            toggle.checked = (index === 0 || index === 1);
+                        });
+                        break;
+                    case 'learning':
+                        // 学习模式: 核心词、含义、应用场景、同义表达
+                        columnToggles.forEach((toggle, index) => {
+                            toggle.checked = (index <= 3);
+                        });
+                        break;
+                    case 'all':
+                        // 显示所有列
+                        columnToggles.forEach(toggle => {
+                            toggle.checked = true;
+                        });
+                        break;
+                }
+                
+                // 应用更改
+                updateColumnVisibility();
+            }
+            
+            // 重新分配列宽
+            function redistributeColumnWidths() {
+                // 获取可见列数
+                const visibleColumns = Array.from(columnToggles).filter(toggle => toggle.checked);
+                
+                if (visibleColumns.length === 0) return;
+                
+                // 基于可见列数重新计算宽度
+                const baseWidthPercent = 100 / visibleColumns.length;
+                
+                // 特殊处理核心词和含义列宽度
+                const specialWeights = {
+                    0: 0.8,  // 核心词列权重
+                    1: 1.1,  // 含义列权重
+                    2: 1.5,  // 应用场景列权重
+                    3: 1.5,  // 同义表达列权重
+                    4: 1.0,  // 反义表达列权重
+                    5: 1.0   // 注意点列权重
+                };
+                
+                // 计算总权重
+                let totalWeight = 0;
+                visibleColumns.forEach(toggle => {
+                    const colIndex = parseInt(toggle.dataset.column);
+                    totalWeight += specialWeights[colIndex] || 1;
+                });
+                
+                // 应用新的宽度
+                visibleColumns.forEach(toggle => {
+                    const colIndex = parseInt(toggle.dataset.column);
+                    const weight = specialWeights[colIndex] || 1;
+                    const widthPercent = (weight / totalWeight * 100) + '%';
+                    
+                    if (headers[colIndex]) {
+                        headers[colIndex].style.width = widthPercent;
+                        
+                        // 更新所有行中对应的单元格
+                        const cells = table.querySelectorAll(`tbody tr td:nth-child(${colIndex + 1})`);
+                        cells.forEach(cell => {
+                            cell.style.width = widthPercent;
+                        });
+                    }
+                });
+            }
+            
+            // 保存列设置到本地存储
+            function saveColumnSettings() {
+                const settings = {};
+                columnToggles.forEach(toggle => {
+                    settings[toggle.dataset.column] = toggle.checked;
+                });
+                
+                try {
+                    localStorage.setItem('columnSettings', JSON.stringify(settings));
+                } catch (e) {
+                    console.warn('无法保存列设置到本地存储:', e);
+                }
+            }
+            
+            // 从本地存储加载列设置
+            function loadColumnSettings() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('columnSettings'));
+                    if (settings) {
+                        columnToggles.forEach(toggle => {
+                            const colIndex = toggle.dataset.column;
+                            if (settings[colIndex] !== undefined) {
+                                toggle.checked = settings[colIndex];
+                            }
+                        });
+                        updateColumnVisibility();
+                    }
+                } catch (e) {
+                    console.warn('无法从本地存储加载列设置:', e);
+                }
+            }
+            
+            // 初始应用列设置
+            updateColumnVisibility();
+            
+            // 大纲视图功能
+            const outlineButton = document.getElementById('show-outline');
+            const outlineModal = document.getElementById('outline-modal');
+            const closeOutlineBtn = document.getElementById('close-outline');
+            const outlineList = document.getElementById('outline-list');
+            const outlineSearchInput = document.getElementById('outline-search-input');
+            const outlineCount = document.getElementById('outline-count');
+            
+            // 收集所有核心词
+            const coreTerms = [];
+            
+            // 获取表格中的所有核心词及其位置
+            function collectCoreTerms() {
+                const termCells = table.querySelectorAll('tbody tr td.term-cell');
+                
+                termCells.forEach((cell, index) => {
+                    const term = cell.textContent.trim();
+                    const row = cell.parentElement;
+                    
+                    coreTerms.push({
+                        term: term,
+                        row: row,
+                        index: index
+                    });
+                });
+                
+                outlineCount.textContent = coreTerms.length;
+            }
+            
+            // 显示大纲
+            function showOutline() {
+                outlineModal.classList.add('active');
+                renderOutlineList(coreTerms);
+            }
+            
+            // 隐藏大纲
+            function hideOutline() {
+                outlineModal.classList.remove('active');
+            }
+            
+            // 渲染大纲列表
+            function renderOutlineList(terms) {
+                outlineList.innerHTML = '';
+                
+                terms.forEach(item => {
+                    const listItem = document.createElement('a');
+                    listItem.className = 'outline-item';
+                    listItem.textContent = item.term;
+                    listItem.href = '#';
+                    listItem.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        hideOutline();
+                        scrollToTerm(item.row);
+                    });
+                    
+                    outlineList.appendChild(listItem);
+                });
+            }
+            
+            // 滚动到指定的核心词
+            function scrollToTerm(row) {
+                // 确保目标行可见（如果有列被隐藏）
+                const termCell = row.querySelector('.term-cell');
+                if (termCell.classList.contains('hidden-column')) {
+                    // 如果核心词列被隐藏，先显示它
+                    const termToggle = document.querySelector('.column-toggle[data-column="0"]');
+                    if (!termToggle.checked) {
+                        termToggle.checked = true;
+                        updateColumnVisibility();
+                    }
+                }
+                
+                // 滚动到目标行并添加高亮效果
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // 添加高亮动画
+                row.classList.add('highlight-row');
+                setTimeout(() => {
+                    row.classList.remove('highlight-row');
+                }, 2000);
+            }
+            
+            // 搜索核心词
+            function searchTerms(query) {
+                if (!query || query.trim() === '') {
+                    renderOutlineList(coreTerms);
+                    return;
+                }
+                
+                const filteredTerms = coreTerms.filter(item => 
+                    item.term.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                renderOutlineList(filteredTerms);
+            }
+            
+            // 事件绑定
+            outlineButton.addEventListener('click', showOutline);
+            closeOutlineBtn.addEventListener('click', hideOutline);
+            
+            // 点击模态框外部关闭
+            outlineModal.addEventListener('click', (e) => {
+                if (e.target === outlineModal) {
+                    hideOutline();
+                }
+            });
+            
+            // 搜索输入事件
+            outlineSearchInput.addEventListener('input', (e) => {
+                searchTerms(e.target.value);
+            });
+            
+            // 添加高亮样式
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes highlight {
+                    0% { background-color: rgba(67, 97, 238, 0.3); }
+                    100% { background-color: transparent; }
+                }
+                
+                .highlight-row {
+                    animation: highlight 2s;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 初始化大纲
+            collectCoreTerms();
+        });
+    </script>
+</body>
+</html>
