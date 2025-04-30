@@ -13,6 +13,9 @@
             --border-color: #dee2e6;
             --header-bg: #3a56d4;  /* 更改为更柔和的蓝色 */
             --header-text: white;
+            --unfamiliar-color: #f64e60;
+            --moderate-color: #ffa800;
+            --familiar-color: #0bb783;
         }
         
         * {
@@ -145,6 +148,7 @@
             font-weight: bold;
             color: var(--primary-color);
             width: 12%;       /* 减少核心词列宽 */
+            position: relative;
         }
         
         .meaning-cell {
@@ -414,6 +418,106 @@
         .outline-count {
             font-weight: bold;
         }
+        
+        /* 熟悉度标签样式 */
+        .familiarity-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-left: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .familiarity-badge:hover {
+            transform: scale(1.1);
+        }
+        
+        .unfamiliar {
+            background-color: var(--unfamiliar-color);
+            color: white;
+        }
+        
+        .moderate {
+            background-color: var(--moderate-color);
+            color: white;
+        }
+        
+        .familiar {
+            background-color: var(--familiar-color);
+            color: white;
+        }
+        
+        /* 筛选控制面板样式 */
+        .familiarity-filter {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-title {
+            font-weight: bold;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .filter-option:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .filter-option input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        
+        .unfamiliar-label {
+            color: var(--unfamiliar-color);
+            font-weight: bold;
+        }
+        
+        .moderate-label {
+            color: var(--moderate-color);
+            font-weight: bold;
+        }
+        
+        .familiar-label {
+            color: var(--familiar-color);
+            font-weight: bold;
+        }
+        
+        /* 过滤后隐藏的行 */
+        tr.filtered-out {
+            display: none;
+        }
+        
+        .familiar-label {
+            color: var(--familiar-color);
+            font-weight: bold;
+        }
+        
+        /* 过滤后隐藏的行 */
+        tr.filtered-out {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -445,6 +549,25 @@
                 </svg>
                 核心词大纲
             </button>
+        </div>
+        
+        <!-- 熟悉度筛选面板 -->
+        <div class="familiarity-filter">
+            <span class="filter-title">熟悉度筛选:</span>
+            <label class="filter-option">
+                <input type="checkbox" class="familiarity-filter-toggle" data-familiarity="unfamiliar" checked>
+                <span class="unfamiliar-label">不熟 😕</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="familiarity-filter-toggle" data-familiarity="moderate" checked>
+                <span class="moderate-label">一般 😐</span>
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="familiarity-filter-toggle" data-familiarity="familiar" checked>
+                <span class="familiar-label">熟悉 😊</span>
+            </label>
+            
+            <button id="reset-familiarity" class="save-settings" style="margin-left: auto;">重置筛选</button>
         </div>
         
         <!-- 大纲视图弹窗 -->
@@ -714,7 +837,7 @@
         
         
         <footer>
-            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 03:15:19</p>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 03:38:54</p>
         </footer>
     </div>
     
@@ -1106,6 +1229,184 @@
             
             // 初始化大纲
             collectCoreTerms();
+            
+            // 添加熟悉度标签到每个核心词
+            function addFamiliarityBadges() {
+                const termCells = table.querySelectorAll('tbody tr td.term-cell');
+                
+                termCells.forEach(cell => {
+                    // 获取单词文本
+                    const wordText = cell.textContent.trim();
+                    
+                    // 创建包装元素，并保持原有内容
+                    const wrapper = document.createElement('div');
+                    wrapper.style.display = 'flex';
+                    wrapper.style.alignItems = 'center';
+                    wrapper.style.justifyContent = 'space-between';
+                    
+                    // 添加文本节点
+                    const textNode = document.createElement('span');
+                    textNode.textContent = wordText;
+                    
+                    // 创建熟悉度标签
+                    const badge = document.createElement('span');
+                    badge.className = 'familiarity-badge unfamiliar';
+                    badge.textContent = '😕';
+                    badge.title = '点击切换熟悉度';
+                    badge.dataset.familiarity = 'unfamiliar';
+                    
+                    // 从本地存储加载熟悉度
+                    const storageKey = `familiarity_${wordText}`;
+                    const savedFamiliarity = localStorage.getItem(storageKey);
+                    if (savedFamiliarity) {
+                        updateBadgeStyle(badge, savedFamiliarity);
+                    }
+                    
+                    // 添加点击事件
+                    badge.addEventListener('click', function() {
+                        cycleFamiliarity(badge, wordText);
+                    });
+                    
+                    // 清空单元格并添加新元素
+                    wrapper.appendChild(textNode);
+                    wrapper.appendChild(badge);
+                    cell.innerHTML = '';
+                    cell.appendChild(wrapper);
+                    
+                    // 为行添加数据属性，用于筛选
+                    const row = cell.parentElement;
+                    row.dataset.familiarity = badge.dataset.familiarity;
+                });
+            }
+            
+            // 循环切换熟悉度
+            function cycleFamiliarity(badge, word) {
+                const current = badge.dataset.familiarity;
+                let next;
+                
+                switch(current) {
+                    case 'unfamiliar':
+                        next = 'moderate';
+                        break;
+                    case 'moderate':
+                        next = 'familiar';
+                        break;
+                    case 'familiar':
+                        next = 'unfamiliar';
+                        break;
+                    default:
+                        next = 'unfamiliar';
+                }
+                
+                updateBadgeStyle(badge, next);
+                
+                // 更新行的数据属性
+                const row = badge.closest('tr');
+                row.dataset.familiarity = next;
+                
+                // 保存到本地存储
+                localStorage.setItem(`familiarity_${word}`, next);
+                
+                // 应用当前的筛选条件
+                applyFamiliarityFilter();
+            }
+            
+            // 更新徽章样式
+            function updateBadgeStyle(badge, familiarity) {
+                badge.classList.remove('unfamiliar', 'moderate', 'familiar');
+                badge.classList.add(familiarity);
+                badge.dataset.familiarity = familiarity;
+                
+                switch(familiarity) {
+                    case 'unfamiliar':
+                        badge.textContent = '😕';
+                        break;
+                    case 'moderate':
+                        badge.textContent = '😐';
+                        break;
+                    case 'familiar':
+                        badge.textContent = '😊';
+                        break;
+                }
+            }
+            
+            // 熟悉度筛选
+            const familiarityFilters = document.querySelectorAll('.familiarity-filter-toggle');
+            const resetFamiliarityButton = document.getElementById('reset-familiarity');
+            
+            // 应用熟悉度筛选
+            function applyFamiliarityFilter() {
+                // 获取选中的筛选选项
+                const selectedFilters = Array.from(familiarityFilters)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.dataset.familiarity);
+                
+                // 获取所有行
+                const rows = table.querySelectorAll('tbody tr');
+                
+                // 应用筛选
+                rows.forEach(row => {
+                    const rowFamiliarity = row.dataset.familiarity || 'unfamiliar';
+                    
+                    if (selectedFilters.includes(rowFamiliarity)) {
+                        row.classList.remove('filtered-out');
+                    } else {
+                        row.classList.add('filtered-out');
+                    }
+                });
+                
+                // 保存筛选设置
+                saveFamiliarityFilterSettings();
+            }
+            
+            // 保存筛选设置
+            function saveFamiliarityFilterSettings() {
+                const settings = {};
+                familiarityFilters.forEach(filter => {
+                    settings[filter.dataset.familiarity] = filter.checked;
+                });
+                
+                try {
+                    localStorage.setItem('familiarityFilterSettings', JSON.stringify(settings));
+                } catch (e) {
+                    console.warn('无法保存熟悉度筛选设置到本地存储:', e);
+                }
+            }
+            
+            // 加载筛选设置
+            function loadFamiliarityFilterSettings() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('familiarityFilterSettings'));
+                    if (settings) {
+                        familiarityFilters.forEach(filter => {
+                            const familiarity = filter.dataset.familiarity;
+                            if (settings[familiarity] !== undefined) {
+                                filter.checked = settings[familiarity];
+                            }
+                        });
+                        applyFamiliarityFilter();
+                    }
+                } catch (e) {
+                    console.warn('无法从本地存储加载熟悉度筛选设置:', e);
+                }
+            }
+            
+            // 重置筛选按钮
+            resetFamiliarityButton.addEventListener('click', function() {
+                familiarityFilters.forEach(filter => {
+                    filter.checked = true;
+                });
+                applyFamiliarityFilter();
+            });
+            
+            // 筛选变化事件
+            familiarityFilters.forEach(filter => {
+                filter.addEventListener('change', applyFamiliarityFilter);
+            });
+            
+            // 初始化熟悉度标签和筛选
+            addFamiliarityBadges();
+            loadFamiliarityFilterSettings();
         });
     </script>
 </body>
