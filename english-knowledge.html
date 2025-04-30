@@ -632,13 +632,6 @@
                 </svg>
                 核心词大纲
             </button>
-            
-            <button class="learning-button" id="toggle-learning-marker">
-                <svg class="outline-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
-                </svg>
-                学习进度
-            </button>
         </div>
         
         <!-- 熟悉度筛选面板 -->
@@ -937,7 +930,7 @@
         
         
         <footer>
-            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 03:53:48</p>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 04:01:41</p>
         </footer>
     </div>
     
@@ -1509,7 +1502,6 @@
             loadFamiliarityFilterSettings();
             
             // 学习进度标记功能
-            const learningButton = document.getElementById('toggle-learning-marker');
             const learningModal = document.getElementById('learning-modal');
             const continueButton = document.getElementById('continue-learning');
             const dismissButton = document.getElementById('dismiss-learning');
@@ -1601,61 +1593,6 @@
                 // 隐藏弹窗
                 learningModal.classList.remove('active');
             }
-            
-            // 事件：点击学习进度按钮
-            learningButton.addEventListener('click', function() {
-                // 打开大纲视图，以便选择学习位置
-                showOutline();
-                
-                // 提示用户选择学习位置
-                const oldTitle = document.querySelector('.outline-header h3').textContent;
-                document.querySelector('.outline-header h3').textContent = '选择学习位置';
-                
-                // 更改大纲项目的点击事件
-                const outlineItems = document.querySelectorAll('.outline-item');
-                
-                // 保存原始点击处理程序
-                if (!window.originalClickHandlers) {
-                    window.originalClickHandlers = [];
-                    outlineItems.forEach(item => {
-                        const oldClick = item.onclick;
-                        window.originalClickHandlers.push(oldClick);
-                    });
-                }
-                
-                outlineItems.forEach((item, index) => {
-                    item.onclick = function(e) {
-                        e.preventDefault();
-                        
-                        // 隐藏大纲
-                        hideOutline();
-                        
-                        // 查找对应的行和单元格
-                        const termText = item.textContent.trim();
-                        const termCells = table.querySelectorAll('tbody tr td.term-cell');
-                        
-                        for (const cell of termCells) {
-                            const cellText = cell.textContent.trim();
-                            if (cellText === termText) {
-                                // 标记学习位置
-                                markLearningPosition(cell);
-                                
-                                // 滚动到此位置
-                                cell.closest('tr').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                break;
-                            }
-                        }
-                        
-                        // 还原大纲标题
-                        document.querySelector('.outline-header h3').textContent = oldTitle;
-                        
-                        // 还原原始点击处理程序
-                        outlineItems.forEach((item, idx) => {
-                            item.onclick = window.originalClickHandlers[idx];
-                        });
-                    };
-                });
-            });
             
             // 事件：继续学习
             continueButton.addEventListener('click', continueFromLastPosition);
