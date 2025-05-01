@@ -152,6 +152,27 @@
             position: relative;
         }
         
+        /* 添加核心词序号样式 */
+        .term-index {
+            position: absolute;
+            right: 3px;
+            bottom: 2px;
+            font-size: 0.7rem;
+            color: #cccccc;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            font-weight: normal;
+            font-style: italic;
+            z-index: 5;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.7);
+        }
+        
+        /* 当鼠标悬停在行上时显示序号 */
+        tr:hover .term-index {
+            opacity: 1;
+        }
+        
         .meaning-cell {
             background-color: rgba(67, 97, 238, 0.03);
             width: 15%;       /* 适当调整 */
@@ -940,7 +961,7 @@
         
         
         <footer>
-            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 14:49:42</p>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 15:24:27</p>
         </footer>
     </div>
     
@@ -1337,7 +1358,7 @@
             function addFamiliarityBadges() {
                 const termCells = table.querySelectorAll('tbody tr td.term-cell');
                 
-                termCells.forEach(cell => {
+                termCells.forEach((cell, cellIndex) => {
                     // 获取单词文本
                     const wordText = cell.textContent.trim();
                     
@@ -1346,6 +1367,7 @@
                     wrapper.style.display = 'flex';
                     wrapper.style.alignItems = 'center';
                     wrapper.style.justifyContent = 'space-between';
+                    wrapper.style.position = 'relative'; // 确保相对定位
                     
                     // 添加文本节点
                     const textNode = document.createElement('span');
@@ -1370,9 +1392,16 @@
                         cycleFamiliarity(badge, wordText);
                     });
                     
+                    // 添加序号标识
+                    const indexElem = document.createElement('span');
+                    indexElem.className = 'term-index';
+                    indexElem.textContent = `#${cellIndex + 1}`;
+                    
                     // 清空单元格并添加新元素
                     wrapper.appendChild(textNode);
                     wrapper.appendChild(badge);
+                    wrapper.appendChild(indexElem); // 将序号添加到包装元素内
+                    
                     cell.innerHTML = '';
                     cell.appendChild(wrapper);
                     
@@ -1633,10 +1662,10 @@
                     // 获取当前时间
                     const now = new Date();
                     const formattedTime = now.getFullYear() + '-' + 
-                                         String(now.getMonth() + 1).padStart(2, '0') + '-' + 
-                                         String(now.getDate()).padStart(2, '0') + ' ' + 
-                                         String(now.getHours()).padStart(2, '0') + ':' + 
-                                         String(now.getMinutes()).padStart(2, '0');
+                                        String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                                        String(now.getDate()).padStart(2, '0') + ' ' + 
+                                        String(now.getHours()).padStart(2, '0') + ':' + 
+                                        String(now.getMinutes()).padStart(2, '0');
                     
                     // 显示提示
                     const feedback = document.createElement('div');
