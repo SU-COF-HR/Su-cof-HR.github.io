@@ -152,27 +152,6 @@
             position: relative;
         }
         
-        /* 添加核心词序号样式 */
-        .term-index {
-            position: absolute;
-            left: 3px;
-            bottom: 3px;
-            font-size: 0.8rem;
-            color: #999999;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
-            font-weight: normal;
-            font-style: italic;
-            z-index: 5;
-            text-shadow: 0 0 1px rgba(255, 255, 255, 0.7);
-        }
-        
-        /* 当鼠标悬停在行上时显示序号 */
-        tr:hover .term-index {
-            opacity: 1;
-        }
-        
         .meaning-cell {
             background-color: rgba(67, 97, 238, 0.03);
             width: 15%;       /* 适当调整 */
@@ -961,7 +940,7 @@
         
         
         <footer>
-            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 15:31:57</p>
+            <p>© 2025 SucofHR的GitHub Pages | 最后更新: 2025-05-01 15:46:36</p>
         </footer>
     </div>
     
@@ -1367,7 +1346,6 @@
                     wrapper.style.display = 'flex';
                     wrapper.style.alignItems = 'center';
                     wrapper.style.justifyContent = 'space-between';
-                    wrapper.style.position = 'relative'; // 确保相对定位
                     
                     // 添加文本节点
                     const textNode = document.createElement('span');
@@ -1392,15 +1370,9 @@
                         cycleFamiliarity(badge, wordText);
                     });
                     
-                    // 添加序号标识
-                    const indexElem = document.createElement('span');
-                    indexElem.className = 'term-index';
-                    indexElem.textContent = `#${cellIndex + 1}`;
-                    
                     // 清空单元格并添加新元素
                     wrapper.appendChild(textNode);
                     wrapper.appendChild(badge);
-                    wrapper.appendChild(indexElem); // 将序号添加到包装元素内
                     
                     cell.innerHTML = '';
                     cell.appendChild(wrapper);
@@ -1408,6 +1380,7 @@
                     // 为行添加数据属性，用于筛选
                     const row = cell.parentElement;
                     row.dataset.familiarity = badge.dataset.familiarity;
+                    row.dataset.termIndex = cellIndex + 1;
                 });
             }
             
@@ -1667,28 +1640,43 @@
                                         String(now.getHours()).padStart(2, '0') + ':' + 
                                         String(now.getMinutes()).padStart(2, '0');
                     
-                    // 显示提示
+                    // 获取核心词序号
+                    const row = this.closest('tr');
+                    const termIndex = row.dataset.termIndex;
+                    const termText = this.querySelector('span').textContent.trim();
+                    
+                    // 显示提示，添加序号信息
                     const feedback = document.createElement('div');
-                    feedback.innerHTML = `已设为学习位置<br><span style="font-size: 0.85em; opacity: 0.8;">时间: ${formattedTime}</span>`;
+                    feedback.innerHTML = `已设为学习位置<br>
+                    <span style="font-size: 0.95em; font-weight: bold; color: #4361ee; margin-top: 5px; display: block;">『${termText}』</span>
+                    <div style="margin-top: 3px; display: flex; justify-content: space-between;">
+                      <span style="font-size: 0.85em; opacity: 0.8;">时间: ${formattedTime}</span>
+                      <span style="font-size: 0.85em; color: #777; font-weight: bold;">#${termIndex}</span>
+                    </div>`;
                     feedback.style.cssText = `
                         position: fixed;
                         top: 50%;
                         left: 50%;
                         transform: translate(-50%, -50%);
-                        background: rgba(0,0,0,0.7);
-                        color: white;
-                        padding: 10px 15px;
-                        border-radius: 4px;
+                        background: rgba(255,255,255,0.95);
+                        color: #333;
+                        padding: 15px 20px;
+                        border-radius: 8px;
                         z-index: 1000;
                         pointer-events: none;
                         text-align: center;
+                        box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+                        min-width: 260px;
+                        border-left: 4px solid #4361ee;
                     `;
                     document.body.appendChild(feedback);
                     
                     setTimeout(() => {
                         feedback.style.opacity = 0;
+                        feedback.style.transform = 'translate(-50%, -60%)';
+                        feedback.style.transition = 'opacity 0.3s, transform 0.3s';
                         setTimeout(() => feedback.remove(), 300);
-                    }, 1500);
+                    }, 1800);
                 });
             });
         });
