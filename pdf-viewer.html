@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学术研究论文</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .pdf-container {
+            margin: 2rem auto;
+            max-width: 1200px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        #pdf-embed {
+            width: 100%;
+            height: 90vh;
+            border: none;
+        }
+        
+        .back-btn {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.8rem 2rem;
+            background: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="window.location.href='index.html'">返回导航页</button>
+        <div class="pdf-container">
+            <embed 
+                id="pdf-embed"
+                src="pdf/zinc-research.pdf" 
+                type="application/pdf"
+                width="100%"
+                height="100%">
+        </div>
+    </div>
+</body>
+</html>
