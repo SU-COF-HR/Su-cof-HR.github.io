@@ -7,43 +7,60 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         .pdf-container {
-            margin: 2rem auto;
+            margin: 1rem auto;
             max-width: 1200px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
             border-radius: 12px;
             overflow: hidden;
+            height: calc(100vh - 2rem); /* 全屏高度适配 */
         }
         
-        #pdf-embed {
+        #pdf-frame {
             width: 100%;
-            height: 90vh;
+            height: 100%;
             border: none;
         }
-        
-        .back-btn {
-            display: block;
-            margin: 1rem auto;
-            padding: 0.8rem 2rem;
-            background: #4361ee;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .pdf-container {
+                margin: 0;
+                border-radius: 0;
+                height: 100vh;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <button class="back-btn" onclick="window.location.href='index.html'">返回导航页</button>
-        <div class="pdf-container">
-            <embed 
-                id="pdf-embed"
-                src="pdf/Myresearch_01.pdf" 
-                type="application/pdf"
-                width="100%"
-                height="100%">
-        </div>
+    <div class="pdf-container">
+        <iframe 
+            id="pdf-frame"
+            src="pdf/Myresearch_01.pdf"
+            type="application/pdf"
+            width="100%"
+            height="100%">
+        </iframe>
     </div>
+
+    <!-- 移动端备用方案 -->
+    <script>
+        // 检测移动端自动显示下载链接
+        if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            document.getElementById('pdf-frame').outerHTML = `
+                <div style="text-align:center; padding:2rem;">
+                    <p>移动端建议下载查看：</p>
+                    <a href="pdf/Myresearch_01.pdf" 
+                       style="display:inline-block; 
+                              padding:1rem 2rem;
+                              background:#4361ee;
+                              color:white;
+                              border-radius:8px;
+                              text-decoration:none;">
+                        下载PDF文件
+                    </a>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
