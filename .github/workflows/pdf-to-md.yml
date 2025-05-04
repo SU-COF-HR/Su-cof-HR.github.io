@@ -7,25 +7,25 @@ jobs:
   convert-pdf:
     runs-on: ubuntu-22.04
     steps:
-      # 步骤1：检出仓库代码（必须）
+      # 步骤1：检出仓库代码
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 步骤2：安装基础工具
+      # 步骤2：安装基础依赖
       - name: 安装依赖
         run: |
           sudo apt-get update
           sudo apt-get install -y poppler-utils
 
-      # 步骤3：使用已验证的pdf2htmlEX镜像
+      # 步骤3：使用正确镜像转换PDF到HTML
       - name: PDF转HTML
-        uses: docker://mnuessler/pdf2htmlex:latest
+        uses: docker://mnuessler/pdf2htmlex:latest  # 修复拼写和格式
         with:
-          args: pdf/Myresearch_01.pdf output.html  # 输入输出路径
+          args: pdf/Myresearch_01.pdf output.html
 
-      # 步骤4：使用稳定版Pandoc镜像
+      # 步骤4：使用正确Pandoc镜像
       - name: HTML转MD
-        uses: docker://pandoc/core:3.1  # 改用稳定版本
+        uses: docker://pandoc/core:3.1  # 添加冒号
         with:
           args: >-
             --output=output.md
