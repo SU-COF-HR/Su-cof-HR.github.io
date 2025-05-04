@@ -11,25 +11,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 步骤2：安装基础依赖
+      # 步骤2：安装基础依赖（仅需poppler-utils）
       - name: 安装依赖
         run: |
           sudo apt-get update
           sudo apt-get install -y poppler-utils
 
-      # 步骤3：安装pdf2htmlex（通过PPA）
-      - name: 安装工具
-        run: |
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository ppa:coolwanglu/pdf2htmlex -y
-          sudo apt-get update
-          sudo apt-get install -y pdf2htmlex
-
-      # 步骤4：PDF转HTML
+      # 步骤3：使用Docker镜像转换PDF到HTML（跳过本地安装）
       - name: PDF转HTML
-        run: pdf2htmlEX pdf/Myresearch_01.pdf output.html
+        uses: docker://bwasti/pdf2htmlex:latest
+        with:
+          args: pdf/Myresearch_01.pdf output.html  # 输入输出路径
 
-      # 步骤5：HTML转Markdown
+      # 步骤4：HTML转Markdown
       - name: HTML转MD
         uses: docker://pandoc/core:3.5
         with:
@@ -37,7 +31,7 @@ jobs:
             --output=output.md
             output.html
 
-      # 步骤6：上传结果
+      # 步骤5：上传结果
       - name: 上传结果
         uses: actions/upload-artifact@v4
         with:
