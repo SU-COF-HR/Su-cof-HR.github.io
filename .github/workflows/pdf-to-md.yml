@@ -15,32 +15,122 @@ jobs:
 
       - name: 创建输出目录
         run: mkdir -p output
+        
+      - name: 创建图片目录
+        run: mkdir -p assets/images
 
       - name: 安装依赖
         run: |
           sudo apt-get update
-          sudo apt-get install -y poppler-utils
-
-      - name: 使用pandoc提取图片并转换
-        uses: docker://pandoc/latex:3.5
-        with:
-          args: >-
-            --extract-media=./extracted-media
-            --standalone
-            --from=pdf
-            --to=markdown
-            --output=output/Myresearch_01.md
-            pdf/Myresearch_01.pdf
-
-      - name: 处理提取的图片
+          sudo apt-get install -y poppler-utils python3-pip
+          pip3 install pdf2image pdfminer.six markdown
+          
+      - name: 检查PDF文件是否存在
         run: |
-          # 如果有提取的图片，移动到适当位置
-          if [ -d "extracted-media" ]; then
-            mkdir -p assets/images
-            mv extracted-media/* assets/images/ || true
-            # 更新Markdown文件中的图片路径
-            sed -i 's|extracted-media/|assets/images/|g' output/Myresearch_01.md
+          if [ ! -f "pdf/Myresearch_01.pdf" ]; then
+            echo "PDF文件不存在，请检查路径"
+            exit 1
           fi
+
+      - name: 提取PDF中的文本
+        run: |
+          python3 -c "
+import os
+from pdfminer.high_level import extract_text
+
+# 创建输出目录
+os.makedirs('output', exist_ok=True)
+
+# 提取文本
+text = extract_text('pdf/Myresearch_01.pdf')
+with open('output/extracted_text.txt', 'w', encoding='utf-8') as f:
+    f.write(text)
+          "
+
+      - name: 提取PDF中的图片
+        run: |
+          python3 -c "
+import os
+from pdf2image import convert_from_path
+import tempfile
+
+# 确保图片目录存在
+os.makedirs('assets/images', exist_ok=True)
+
+# 转换PDF页面为图片
+images = convert_from_path('pdf/Myresearch_01.pdf', dpi=300)
+
+# 保存图片
+for i, image in enumerate(images):
+    image.save(f'assets/images/page_{i+1}.png', 'PNG')
+          "
+
+      - name: 转换文本到Markdown
+        run: |
+          python3 -c "
+import os
+import re
+
+# 读取提取的文本
+with open('output/extracted_text.txt', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+# 基本的Markdown格式化
+# 识别标题 (假设大写行作为标题)
+lines = text.split('\n')
+md_lines = []
+image_count = len([f for f in os.listdir('assets/images') if f.endswith('.png')])
+
+# 添加frontmatter
+md_lines.append('---')
+md_lines.append('title: \"PDF转换文档\"')
+md_lines.append(f'date: {os.popen(\"date +%Y-%m-%d\").read().strip()}')
+md_lines.append('---')
+md_lines.append('')
+
+# 添加图片引用
+for i in range(image_count):
+    if i == 0:  # 第一张图片放在顶部
+        md_lines.append(f'![Page {i+1}](/assets/images/page_{i+1}.png)')
+        md_lines.append('')
+
+# 处理文本
+in_paragraph = False
+for line in lines:
+    line = line.strip()
+    
+    # 跳过空行
+    if not line:
+        if in_paragraph:
+            md_lines.append('')
+            in_paragraph = False
+        continue
+    
+    # 假设全大写的短行是标题
+    if line.isupper() and len(line) < 100:
+        md_lines.append(f'## {line.title()}')
+        md_lines.append('')
+    # 假设数字开头的行是列表项
+    elif re.match(r'^\\d+\\.\\s', line):
+        md_lines.append(line)
+        md_lines.append('')
+    # 其他作为普通段落
+    else:
+        if not in_paragraph:
+            md_lines.append(line)
+            in_paragraph = True
+        else:
+            md_lines[-1] += ' ' + line
+
+# 在底部添加剩余的图片
+for i in range(1, image_count):  # 从第二张图片开始
+    md_lines.append('')
+    md_lines.append(f'![Page {i+1}](/assets/images/page_{i+1}.png)')
+
+# 写入Markdown文件
+with open('output/Myresearch_01.md', 'w', encoding='utf-8') as f:
+    f.write('\\n'.join(md_lines))
+          "
 
       - name: 提交转换后的文件
         run: |
