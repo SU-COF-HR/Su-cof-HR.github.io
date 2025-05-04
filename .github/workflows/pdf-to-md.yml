@@ -1,31 +1,51 @@
-name: PDF转Markdown
+name: PDF到Markdown转换
 
 on:
+  push:
+    paths:
+      - 'pdf/**'  # 当pdf目录有变动时触发
   workflow_dispatch:  # 允许手动触发
 
 jobs:
-  convert-pdf:
-    runs-on: ubuntu-22.04
+  convert_pdf_to_md:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 创建输出目录
+        run: mkdir -p output
+
       - name: 安装依赖
-        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
 
-      # 使用正确镜像名称和标签
-      - name: PDF转HTML
-        uses: docker://mnuessler/pdf2htmlex:latest
+      - name: 使用pandoc提取图片并转换
+        uses: docker://pandoc/latex:3.5
         with:
-          args: pdf/Myresearch_01.pdf output.html
+          args: >-
+            --extract-media=./extracted-media
+            --standalone
+            --from=pdf
+            --to=markdown
+            --output=output/Myresearch_01.md
+            pdf/Myresearch_01.pdf
 
-      - name: HTML转MD
-        uses: docker://pandoc/core:3.1
-        with:
-          args: --output=output.md output.html
+      - name: 处理提取的图片
+        run: |
+          # 如果有提取的图片，移动到适当位置
+          if [ -d "extracted-media" ]; then
+            mkdir -p assets/images
+            mv extracted-media/* assets/images/ || true
+            # 更新Markdown文件中的图片路径
+            sed -i 's|extracted-media/|assets/images/|g' output/Myresearch_01.md
+          fi
 
-      - name: 上传结果
-        uses: actions/upload-artifact@v4
-        with:
-          name: markdown-output
-          path: output.md
+      - name: 提交转换后的文件
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add output/ assets/ || true
+          git commit -m "自动转换PDF到Markdown" || true
+          git push 
