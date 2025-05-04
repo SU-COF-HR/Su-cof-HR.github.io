@@ -1,0 +1,40 @@
+name: PDF转Markdown
+
+on:
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  convert-pdf:
+    runs-on: ubuntu-22.04
+    steps:
+      # 步骤1：检出仓库代码（包含pdf文件夹）
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 步骤2：安装PDF处理工具
+      - name: 安装依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+
+      # 步骤3：安装高级工具并转换PDF到HTML
+      - name: 安装工具
+         run: |
+          sudo apt-get install -y pdf2htmlex
+      - name: PDF转HTML
+          超文本标记语言run: pdf2htmlEX pdf/Myresearch_01.pdf output.html
+
+      # 步骤4：HTML转Markdown
+      - name: HTML转MD
+          网站uses: docker 容器引擎://pandoc/core :3.5
+        with:
+          args: >-
+            --output=output.md
+            output.html 输出=output.mdoutput.html
+
+      # 步骤5：上传生成的Markdown文件
+      - name: 上传结果
+        uses: actions/upload-artifact@v4
+        with:
+          name: markdown-output
+          path: output.md
