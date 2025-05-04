@@ -24,13 +24,13 @@ jobs:
       - name: PDF转HTML
         run: pdf2htmlEX pdf/Myresearch_01.pdf output.html
 
-      # 步骤4：HTML转Markdown
+      # 步骤4：HTML转Markdown（已修复镜像和参数）
       - name: HTML转MD
-        uses: docker://pandoc/core :3.5
+        uses: docker://pandoc/core:3.5
         with:
           args: >-
             --output=output.md
-            output.html=output.mdoutput.html
+            output.html
 
       # 步骤5：上传生成的Markdown文件
       - name: 上传结果
