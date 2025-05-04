@@ -19,18 +19,18 @@ jobs:
 
       # 步骤3：安装高级工具并转换PDF到HTML
       - name: 安装工具
-         run: |
+        run: |
           sudo apt-get install -y pdf2htmlex
       - name: PDF转HTML
-          超文本标记语言run: pdf2htmlEX pdf/Myresearch_01.pdf output.html
+        run: pdf2htmlEX pdf/Myresearch_01.pdf output.html
 
       # 步骤4：HTML转Markdown
       - name: HTML转MD
-          网站uses: docker 容器引擎://pandoc/core :3.5
+        uses: docker://pandoc/core :3.5
         with:
           args: >-
             --output=output.md
-            output.html 输出=output.mdoutput.html
+            output.html=output.mdoutput.html
 
       # 步骤5：上传生成的Markdown文件
       - name: 上传结果
